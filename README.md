@@ -8,6 +8,10 @@ Resume Analyzer is a Gradio web app that reviews a resume against a selected
 technical role. It retrieves relevant role benchmarks and resume-improvement
 guidance, then uses a language model to produce a role-specific report.
 
+## 📸 Screenshot
+
+![Resume Analyzer application screenshot](./image.jpeg)
+
 ## 👥 Team Members
 
 - Musani Likith Reddy (RA2511028020082)
