@@ -12,7 +12,7 @@ guidance, then uses a language model to produce a role-specific report.
 
 - Musani Likith Reddy
 - Sahid Saroj Bastia 
-- Aditya Kumar Singh 
+- Aditya Kumar Singh <br>
 DEPT: BTECH CSE with specialisation CLOUD COMPUTING | SRMIST RAMAPURAM
 
 ## ✨ Features
