@@ -1,0 +1,68 @@
+ROLE: Game Developer / Engine Engineer
+ROLE_LABEL: Game Developer
+TARGET_DOMAIN: Real-Time Rendering, Game Engine Architecture, Gameplay Systems, and Physics
+
+CORE SKILLS REQUIRED:
+- Object-Oriented and Data-Oriented Design (DOD): Entity-Component-System (ECS) architecture
+- Low-level memory management: manual allocation, cache coherence, memory pools, pointer arithmetic
+- Computer graphics mathematics: linear algebra, 3D vectors, matrices, quaternions, coordinate projections
+- Graphics rendering pipeline: vertex processing, rasterization, pixel/fragment shaders, depth buffers
+- Real-time rendering techniques: deferred shading, forward rendering, shadow mapping, ambient occlusion
+- Collision detection algorithms: AABB (Axis-Aligned Bounding Box), OBB, Raycasting, GJK algorithm
+- Game physics simulation: rigid body dynamics, numerical integration (Verlet, Euler), constraints, impulse
+- Spatial partitioning data structures: Octrees, Quadtrees, BVH (Bounding Volume Hierarchy), BSP trees
+- Gameplay systems: state machines (FSM), behavior trees, input handling systems, quest graphs
+- Pathfinding & steering algorithms: A* pathfinding, Dijkstra, navmesh generation, boids flocking
+- Game loop architectures: fixed-timestep physics updates, variable-rate rendering, frame interpolation
+- Real-time audio programming: spatial 3D audio, occlusion filtering, dynamic event-driven soundscapes
+- Multiplayer networking: client-side prediction, server reconciliation, dead reckoning, lag compensation
+- Animation systems: skeletal animation, forward/inverse kinematics (IK), blend trees, state transitions
+- Profiling & optimization: identifying CPU/GPU bottlenecks, draw call reduction, LOD (Level of Detail)
+
+TOOLS & TECHNOLOGIES:
+- Core programming languages: C++, C#, C, HLSL, GLSL, Python (tooling), Lua (scripting)
+- Commercial game engines: Unreal Engine 5, Unity
+- Open-source engines & frameworks: Godot Engine, Raylib, SDL2, Raylib, MonoGame
+- Low-level Graphics APIs: DirectX 11/12, Vulkan, OpenGL, Metal, WebGPU
+- Shader authoring tools: Unreal Material Editor, Unity Shader Graph, RenderDoc
+- Physics engines: PhysX, Box2D, Havok, Bullet Physics, Jolt Physics
+- Version control & asset management: Git LFS, Perforce (Helix Core), Plastic SCM
+- Digital Content Creation (DCC) integration: Blender, Maya, Substance Painter, 3ds Max
+- Profiling tools: Unreal Insights, NVIDIA Nsight Graphics, PIX on Windows, Tracy Profiler
+- Audio middleware: FMOD Studio, Wwise
+- Networking frameworks: Unreal Multiplayer Framework, Photon, Mirror, Netcode for GameObjects
+
+SYSTEM & HARDWARE COMPETENCIES:
+- SIMD optimization: utilizing SSE/AVX vector intrinsics for high-volume coordinate transformations
+- Multi-threaded game systems: job systems, task schedulers, thread pools, race condition avoidance
+- GPU architecture awareness: compute shaders, warp/wavefront occupancy, memory bandwidth constraints
+- Asset streaming systems: asynchronous file I/O, background texture decompression, virtual texturing
+- Platform SDK compilation: targeting Windows (Win32), Linux, console architectures, and mobile devices
+- Save game serialization: binary state serialization, data versioning, schema migration on game updates
+- Memory budgeting: fixed heap allocations per game subsystem (audio, VFX, physics) to prevent out-of-memory crashes
+- High Dynamic Range (HDR) pipelines: tone mapping operators, color grading LUTs, post-processing stacks
+
+PIPELINE, ASSET WORKFLOWS & PRODUCTION CRITERIA:
+- Building custom editor extensions: inspector tools, level editing gizmos, automated asset importers
+- Continuous Integration for game projects: automated builds, asset cooking pipelines, headless smoke tests
+- Performance budgeting: maintaining stable 60 FPS / 120 FPS targets within strict 16.6ms / 8.3ms frame times
+- Localization pipelines: dynamic font swapping, UTF-8 string registries, right-to-left layout support
+- Modding architecture: exposing clean scripting sandboxes via Lua or WASM without exposing core binary
+- Anti-cheat integration: client memory integrity validation, server-authoritative state verification
+
+EXPECTED PROJECT DEPTH:
+- Custom 3D game engine built from scratch using C++ and OpenGL/Vulkan with a decoupled rendering loop
+- Spatial partitioning acceleration structure (Octree) optimizing frustum culling and collision checks
+- Entity Component System (ECS) architecture handling 10,000+ simultaneous simulated moving entities at 60 FPS
+- Custom lighting model implemented with HLSL/GLSL shaders supporting multiple dynamic point and spot lights
+- Authoritative client-server multiplayer prototype featuring UDP sockets, client prediction, and reconciliation
+- Character controller utilizing dynamic Inverse Kinematics (IK) for precise foot placement across uneven terrain
+- Integrated Tracy Profiler instrumentation detailing frame-time spikes across physics, render, and update ticks
+- Comprehensive technical design document outlining architecture decisions, class diagrams, and memory budgets
+
+CODE QUALITY & ENGINEERING STANDARDS:
+- Modern C++ standards (C++17/C++20) leveraging RAII, smart pointers, and zero-overhead abstractions
+- Strict adherence to industry style guides (e.g., Unreal Engine Coding Standard or Google C++ Style Guide)
+- Elimination of dynamic memory allocations during active runtime frames (zero malloc/new in game loop)
+- Modular codebase separating engine runtime, platform abstraction layers, and high-level gameplay scripts
+- Fully documented math utilities with unit test suites verifying quaternion transformations and vector projections

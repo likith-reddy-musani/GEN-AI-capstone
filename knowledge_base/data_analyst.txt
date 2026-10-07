@@ -1,0 +1,67 @@
+ROLE: Data Analyst
+ROLE_LABEL: Data Analyst
+TARGET_DOMAIN: Business Intelligence, Analytics Engineering, Statistical Modeling, and Reporting
+
+CORE SKILLS REQUIRED:
+- Advanced relational database querying: complex joins, subqueries, common table expressions (CTEs)
+- SQL window functions: ROW_NUMBER, DENSE_RANK, NTILE, LAG, LEAD, moving averages, rolling sums
+- Data aggregation and pivot techniques: GROUP BY, HAVING, GROUPING SETS, ROLLUP, CUBE
+- Dimensional data modeling: star schema, snowflake schema, fact tables, slowly changing dimensions (SCD)
+- Exploratory Data Analysis (EDA): distribution analysis, skewness, missing value imputation, anomalies
+- Data hygiene & cleaning: deduplication, string parsing, regular expressions, date/time normalization
+- Descriptive statistics: mean, median, mode, variance, standard deviation, interquartile range (IQR)
+- Inferential statistics: hypothesis testing, p-values, confidence intervals, z-tests, two-sample t-tests
+- A/B testing design: minimum detectable effect (MDE), sample size determination, statistical power
+- Business KPI definition: Customer Acquisition Cost (CAC), Lifetime Value (LTV), Churn Rate, MRR, ARR
+- Cohort analysis and retention curve calculation across monthly/quarterly active user segments
+- Funnel optimization: conversion rate drop-off analysis across multi-step user onboarding flows
+- Data storytelling: translating technical statistical metrics into actionable commercial strategy
+- Data governance fundamentals: data dictionaries, lineage mapping, PII anonymization, metadata management
+- Executive communication: preparing slide decks, briefing business stakeholders, presenting insights
+
+TOOLS & TECHNOLOGIES:
+- Query engines & dialects: PostgreSQL, MySQL, Google BigQuery, Snowflake, Amazon Redshift
+- Data manipulation & analysis: Python (Pandas, NumPy), R (dplyr, ggplot2), Advanced Microsoft Excel
+- Business Intelligence platforms: Tableau, Microsoft Power BI, Looker, Apache Superset, Metabase
+- Analytics engineering frameworks: dbt (data build tool), SQLFluff (SQL linter)
+- Spreadsheets: Google Sheets, Microsoft Excel (VLOOKUP, INDEX/MATCH, XLOOKUP, Pivot Tables, Power Query)
+- Version control: Git, GitHub, GitLab for data analytics code repositories
+- Orchestration & scheduling: Apache Airflow (DAG analysis), Cron, Prefect
+- Notebook environments: Jupyter Notebooks, Google Colaboratory, Hex
+- Visualization libraries: Matplotlib, Seaborn, Plotly, Altair
+- Survey & customer tracking platforms: Google Analytics 4, Mixpanel, Amplitude, Segment
+
+DATABASE, WAREHOUSE & MODELING COMPETENCIES:
+- Writing performance-optimized analytical queries against multi-terabyte columnar data warehouses
+- Partitioning and clustering strategies in warehouses like BigQuery and Snowflake to minimize query costs
+- Constructing ELT transformation models with dbt: staging, intermediate, and mart layers
+- Implementing dbt generic tests (unique, not_null, accepted_values, relationships) and custom singular tests
+- Understanding database execution plans: EXPLAIN, EXPLAIN ANALYZE, index usage, full table scans
+- Integrating flat file ingestion (CSV, Parquet, JSON lines) into data warehouse staging environments
+- Managing semantic layers: defining standardized dimensions, metrics, and business logic centrally
+- Implementing role-based row-level security (RLS) inside analytical reporting dashboards
+
+REPORTING, PRODUCT & EXPERIMENTAL EVALUATION:
+- Designing executive dashboards with intuitive information hierarchy, drill-down paths, and responsive filters
+- Conducting multivariate user segmentation to identify high-margin consumer cohorts
+- Revenue attribution modeling: first-touch, last-touch, linear, and time-decay attribution models
+- Churn risk profiling: identifying leading indicators and behavioral correlations causing churn
+- Pricing elasticity analysis: measuring customer demand sensitivity against price tier modifications
+- Automated scheduled reporting: distributing automated daily digest reports via Slack/email integrations
+
+EXPECTED PROJECT DEPTH:
+- Complete end-to-end analytics workflow from raw transactional schema to final executive BI dashboard
+- Well-structured dbt repository organizing raw data into staging, dimensional facts, and marts
+- Comprehensive cohort retention matrix calculated via SQL window functions tracking customer repeat rates
+- Robust A/B test analysis notebook containing sample size estimation, statistical tests, and visual curves
+- Production Power BI or Tableau workbook with interactive cross-filtering, dynamic parameters, and DAX measures
+- Data quality assurance suite checking null constraints, primary key uniqueness, and freshness intervals
+- Written executive summary report highlighting revenue leakages, actionable recommendations, and ROI forecasts
+- GitHub repository featuring clear README documentation, SQL code formatting, and data lineage graphs
+
+CODE QUALITY & ENGINEERING STANDARDS:
+- Strictly formatted SQL following standard industry style guides (leading commas, uppercase keywords, CTE naming)
+- Clean, documented Python notebooks separating code blocks, visualizations, and business takeaways
+- Explicit column aliasing and defensive casting to handle unforeseen null values or schema drifts
+- Version-controlled metric definitions ensuring zero divergence across disparate analytical dashboards
+- Reproducible environments with pinned dependencies specified in requirements.txt or environment.yml

@@ -1,0 +1,71 @@
+ROLE: Cloud & DevOps Engineer
+ROLE_LABEL: Cloud DevOps Engineer
+TARGET_DOMAIN: Infrastructure as Code, Cloud Architecture, CI/CD, and Site Reliability
+
+CORE SKILLS REQUIRED:
+- Cloud architecture design: high availability, fault tolerance, multi-AZ, and multi-region patterns
+- Infrastructure as Code (IaC): declarative provisioning, state management, module authoring
+- Containerization: writing lean multi-stage Dockerfiles, vulnerability scanning, image minimization
+- Container orchestration: Kubernetes cluster management, workload scheduling, control plane operations
+- Continuous Integration & Continuous Deployment (CI/CD): automated build, test, and release pipelines
+- Linux system administration: systemd unit management, process signals, bash scripting, cron automation
+- Networking: TCP/IP stack, DNS configuration, CIDR subnetting, VPC peering, NAT gateways, routing tables
+- Traffic routing: Application Load Balancers, Network Load Balancers, Ingress Controllers, reverse proxies
+- Security & identity: IAM least privilege policies, OpenID Connect (OIDC), role assumption, STS tokens
+- Cloud storage systems: object storage (S3/GCS), block storage (EBS/Persistent Disks), shared NFS (EFS)
+- GitOps methodologies: declarative cluster state reconciliation and drift detection
+- Site Reliability Engineering (SRE): defining SLIs, SLOs, SLAs, and managing error budgets
+- Configuration management: idempotent server provisioning, template rendering, parameter management
+- Secret management: dynamic credential leasing, encryption at rest, encryption in transit
+- Disaster recovery planning: RTO (Recovery Time Objective) and RPO (Recovery Point Objective) enforcement
+
+TOOLS & TECHNOLOGIES:
+- Public cloud providers: Amazon Web Services (AWS), Google Cloud Platform (GCP), Microsoft Azure
+- IaC tools: Terraform, OpenTofu, AWS CloudFormation, Pulumi, Terragrunt
+- Containerization runtimes: Docker, containerd, Podman, Buildah
+- Kubernetes ecosystem: kubectl, Helm, Kustomize, K9s, Minikube, Kind
+- CI/CD platforms: GitHub Actions, GitLab CI, Jenkins, Argo Workflows, CircleCI
+- GitOps controllers: ArgoCD, Flux CD
+- Configuration management: Ansible, Puppet, Chef
+- Secret storage: HashiCorp Vault, AWS Secrets Manager, Sealed Secrets, SOPS
+- Service mesh: Istio, Linkerd, Consul
+- Observability & logging: Prometheus, Grafana, Loki, ELK Stack (Elasticsearch, Logstash, Kibana)
+- Distributed tracing: Jaeger, OpenTelemetry Collector, Tempo
+- Security scanners: Trivy, Clair, SonarQube, Checkov, tfsec, Falco
+- Reverse proxies & API gateways: NGINX, Traefik, HAProxy, Envoy, Kong
+- Package registries: Harbor, Amazon ECR, Nexus Repository, Artifactory
+
+CLOUD & SYSTEM COMPETENCIES:
+- AWS Core Services: EC2, S3, IAM, VPC, Route 53, ECS, EKS, RDS, DynamoDB, Lambda, CloudWatch
+- Cloud networking: Direct Connect, VPN tunnels, Transit Gateways, private link endpoints
+- Linux kernel tuning: sysctl parameters, file descriptors limits, swap memory behavior, cgroups v2
+- Network security: Security Groups, Network ACLs, Web Application Firewalls (WAF), DDoS mitigation
+- Cost optimization: FinOps practices, AWS Compute Optimizer, spot/preemptible instances, savings plans
+- Hybrid cloud architectures and cross-account access delegation using STS AssumeRole
+- Automated backup lifecycle rules: snapshots, cross-region replication, immutable retention vaults
+- Zero trust architecture implementation: mutual TLS (mTLS), strict service-to-service authorization
+
+RELIABILITY, INCIDENT MANAGEMENT & AUTOMATION:
+- Designing automated self-healing infrastructure: autoscaling groups, horizontal pod autoscalers (HPA)
+- Chaos engineering: injecting latency, pod terminations, and packet loss using Chaos Mesh
+- Zero-downtime deployment strategies: blue-green deployments, canary releases, rolling updates
+- On-call incident response: root cause analysis (RCA), blameless post-mortems, runbook documentation
+- Infrastructure backup validation: automated restore drills, database snapshot verification tests
+- Alert engineering: alert deduplication, routing via PagerDuty, eliminating alert fatigue
+
+EXPECTED PROJECT DEPTH:
+- Modular Terraform repository deploying a production-ready AWS VPC with public/private subnet topology
+- Multi-node Kubernetes (EKS/GKE) cluster provisioned strictly through declarative IaC modules
+- End-to-end GitHub Actions pipeline with automated linting, security scans, unit tests, and image publishing
+- Automated GitOps pipeline using ArgoCD syncing applications from a dedicated configuration repository
+- Comprehensive observability stack deployed with Prometheus Operator, Alertmanager, and custom Grafana dashboards
+- Ingress controller setup with automatic TLS certificate issuance via cert-manager and Let's Encrypt
+- Zero-trust network policy configuration restricting pod-to-pod east-west traffic inside Kubernetes
+- Production disaster recovery simulation with documented RTO/RPO metrics and infrastructure teardown tests
+
+CODE QUALITY & ENGINEERING STANDARDS:
+- Adherence to standard directory structures for Terraform (main.tf, variables.tf, outputs.tf, versions.tf)
+- Semantic versioning on all reusable CI/CD pipeline actions, Docker images, and Helm charts
+- Pre-commit hooks enforcing shell-check, terraform fmt, tflint, and secret leakage prevention
+- Complete infrastructure diagrams illustrating packet flow, subnet isolation, and security perimeter
+- Defensive infrastructure scripting featuring set -euo pipefail flags and deterministic cleanup traps
