@@ -648,22 +648,50 @@ def get_kb_store() -> Chroma:
     return _kb_store
 
 
-def analyze_resume(file_obj, selected_role: str) -> str:
+def _split_report(report: str) -> tuple[str, str, str]:
+    """
+    Splits the LLM markdown report into the three labelled sections.
+    Falls back gracefully if section headers are missing.
+    """
+    import re as _re
+    # Match section headers like "## 1. Missing Skills" or "## Missing Skills"
+    parts = _re.split(r"(?m)^##\s+\d*\.?\s*", report)
+    # parts[0] is anything before the first ##, parts[1..3] are the sections
+    sections = [p.strip() for p in parts if p.strip()]
+
+    def _extract(keyword: str) -> str:
+        for s in sections:
+            if s.lower().startswith(keyword.lower()):
+                # Remove the heading line, return body
+                lines = s.splitlines()
+                return "\n".join(lines[1:]).strip()
+        return ""
+
+    missing   = _extract("Missing Skills")   or (sections[0] if len(sections) > 0 else "")
+    relevant  = _extract("Relevant Exp")     or (sections[1] if len(sections) > 1 else "")
+    improve   = _extract("Areas")            or (sections[2] if len(sections) > 2 else "")
+
+    # Final fallback: if splitting failed just dump full report in first box
+    if not any([missing, relevant, improve]):
+        return report, "", ""
+
+    return missing, relevant, improve
+
+
+def analyze_resume(file_obj, selected_role: str) -> tuple[str, str, str, str]:
     """
     Main pipeline function called by Gradio.
 
-    Args:
-        file_obj:       Gradio file object (has .name with the temp file path)
-        selected_role:  String from the dropdown, e.g. "Software Engineer"
-
-    Returns:
-        Markdown string report.
+    Returns four values:
+        status_msg   — short status line shown at the top
+        missing      — Missing Skills section markdown
+        relevant     — Relevant Experience section markdown
+        improve      — Areas to Improve section markdown
     """
-    # --- Validate inputs ---
     if file_obj is None:
-        return "⚠️ Please upload a resume file (.pdf or .docx)."
+        return "⚠️ Please upload a resume file (.pdf or .docx).", "", "", ""
     if not selected_role:
-        return "⚠️ Please select a target role from the dropdown."
+        return "⚠️ Please select a target role from the dropdown.", "", "", ""
 
     file_path = file_obj.name if hasattr(file_obj, "name") else str(file_obj)
 
@@ -680,21 +708,24 @@ def analyze_resume(file_obj, selected_role: str) -> str:
         # STAGE 4: Grounded LLM generation
         report = run_analysis(benchmark_ctx, resume_ctx, rubric_ctx, selected_role)
 
-        return report
+        # Split into three panels
+        missing, relevant, improve = _split_report(report)
+
+        status = f"✅ Analysis complete for **{selected_role}**"
+        return status, missing, relevant, improve
 
     except ValueError as ve:
-        return f"⚠️ Input error: {ve}"
+        msg = f"⚠️ {ve}"
+        return msg, "", "", ""
     except Exception as e:
-        return f"❌ An error occurred during analysis:\n\n```\n{e}\n```\n\nCheck your API key, base URL, and model name at the top of `app.py`."
+        msg = f"❌ Error: `{e}`\n\nCheck API key / base URL / model name at the top of `app.py`."
+        return msg, "", "", ""
 
 
 # ---------------------------------------------------------------------------
 # 🖥️  STAGE 5 — GRADIO UI
 # ---------------------------------------------------------------------------
 
-ROLE_OPTIONS = list(ROLE_DISPLAY_TO_TAG.keys())
-
-# Reorder roles for better UX (new roles at the end)
 ROLE_OPTIONS = [
     "Cloud & DevSecOps Engineer",
     "Software Engineer",
@@ -704,29 +735,141 @@ ROLE_OPTIONS = [
     "Game Developer",
 ]
 
+_CSS = """
+/* ── Page & outer wrapper background only ── */
+.gradio-container { background: #0f1117 !important; }
+body { background: #0f1117 !important; }
+
+/* ── Header card ── */
+#header-card {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 28px 32px 20px;
+    margin-bottom: 8px;
+}
+#header-card h1 { color: #f1f5f9; font-size: 1.9rem; margin: 0 0 6px; }
+#header-card p  { color: #94a3b8; margin: 0; font-size: 0.95rem; }
+
+/* ── Input panel ── */
+#input-panel {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 20px 24px;
+}
+
+/* ── Analyse button ── */
+#analyze-btn {
+    background: linear-gradient(90deg, #6366f1, #8b5cf6) !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    padding: 12px 0 !important;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+#analyze-btn:hover { opacity: 0.88; }
+
+/* ── Status bar ── */
+#status-bar { border-radius: 8px; padding: 0 4px; }
+
+/* ── Result column cards — all three identical base style ── */
+.result-card {
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+    border-radius: 12px !important;
+    padding: 18px 20px !important;
+    min-height: 220px;
+}
+
+/* ── Coloured top accent per card ── */
+#card-missing  { border-top: 3px solid #f87171 !important; }
+#card-relevant { border-top: 3px solid #34d399 !important; }
+#card-improve  { border-top: 3px solid #fbbf24 !important; }
+
+/* ── Section labels inside each card ── */
+.section-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 0 0 12px !important;
+    padding: 0 !important;
+}
+.label-missing  { color: #f87171 !important; }
+.label-relevant { color: #34d399 !important; }
+.label-improve  { color: #fbbf24 !important; }
+
+/* ── Markdown text inside cards ── */
+.result-card p, .result-card li  { color: #cbd5e1 !important; font-size: 0.9rem; }
+.result-card h2, .result-card h3 { color: #f1f5f9 !important; }
+.result-card strong              { color: #e2e8f0 !important; }
+.result-card code                { background: #0f172a; color: #a5f3fc; padding: 1px 5px; border-radius: 4px; }
+
+/* ── Dropdown cursor ── */
+.gradio-dropdown,
+.gradio-dropdown *,
+.gradio-dropdown input,
+.gradio-dropdown svg,
+.gradio-dropdown li { cursor: pointer !important; }
+"""
+
 with gr.Blocks(title="Resume Analyzer") as demo:
 
-    gr.Markdown("# Resume Analyzer\nUpload a resume and select a target role to get a gap analysis report.")
+    # ── Header ──────────────────────────────────────────────────────────────
+    with gr.Group(elem_id="header-card"):
+        gr.HTML("""
+            <h1>📄 Resume Analyzer</h1>
+            <p>Upload your resume and pick a target role — get a gap analysis in seconds.</p>
+        """)
 
-    with gr.Row():
-        file_input = gr.File(
-            label="Upload Resume (.pdf or .docx)",
-            file_types=[".pdf", ".docx"],
+    # ── Inputs ──────────────────────────────────────────────────────────────
+    with gr.Group(elem_id="input-panel"):
+        with gr.Row():
+            file_input = gr.File(
+                label="Upload Resume",
+                file_types=[".pdf", ".docx"],
+                scale=3,
+            )
+            role_dropdown = gr.Dropdown(
+                choices=ROLE_OPTIONS,
+                value=ROLE_OPTIONS[0],
+                label="Target Role",
+                scale=2,
+            )
+
+        analyze_btn = gr.Button(
+            "🔍  Analyze Resume",
+            elem_id="analyze-btn",
+            variant="primary",
         )
-        role_dropdown = gr.Dropdown(
-            choices=ROLE_OPTIONS,
-            label="Target Role",
-            value=ROLE_OPTIONS[0],
-        )
 
-    analyze_btn = gr.Button("Analyze Resume")
+    # ── Status ──────────────────────────────────────────────────────────────
+    status_bar = gr.Markdown(elem_id="status-bar")
 
-    output = gr.Markdown(label="Analysis Report")
+    # ── Results (three side-by-side cards) ─────────────────────────────────
+    with gr.Row(equal_height=True):
 
+        with gr.Column(elem_id="card-missing", elem_classes=["result-card"]):
+            gr.HTML('<p class="section-label label-missing">🔴 Missing Skills</p>')
+            out_missing = gr.Markdown()
+
+        with gr.Column(elem_id="card-relevant", elem_classes=["result-card"]):
+            gr.HTML('<p class="section-label label-relevant">🟢 Relevant Experience</p>')
+            out_relevant = gr.Markdown()
+
+        with gr.Column(elem_id="card-improve", elem_classes=["result-card"]):
+            gr.HTML('<p class="section-label label-improve">🟡 Areas to Improve</p>')
+            out_improve = gr.Markdown()
+
+    # ── Wire up ─────────────────────────────────────────────────────────────
     analyze_btn.click(
         fn=analyze_resume,
         inputs=[file_input, role_dropdown],
-        outputs=output,
+        outputs=[status_bar, out_missing, out_relevant, out_improve],
     )
 
 # ---------------------------------------------------------------------------
@@ -737,4 +880,4 @@ if __name__ == "__main__":
     # Pre-warm: create knowledge base files and index into ChromaDB before
     # the first user request so the initial analysis is fast.
     get_kb_store()
-    demo.launch()
+    demo.launch(css=_CSS)
