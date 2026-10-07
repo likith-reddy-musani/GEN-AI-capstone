@@ -27,9 +27,7 @@ from langchain_core.documents import Document
 # ---------------------------------------------------------------------------
 # ⚙️  CONFIGURATION
 # ---------------------------------------------------------------------------
-API_KEY    = os.environ.get("NEXUS_API_KEY")
-if not API_KEY:
-    raise RuntimeError("Set the NEXUS_API_KEY environment variable before launching the app.")
+API_KEY = os.environ.get("NEXUS_API_KEY", "insert-your-api-key-here")
 BASE_URL   = "https://nexusapi.navigatelabs.ai"
 MODEL_NAME = "nova-micro"
 
