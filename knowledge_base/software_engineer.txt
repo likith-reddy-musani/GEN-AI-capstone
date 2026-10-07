@@ -1,0 +1,68 @@
+ROLE: Software Engineer
+ROLE_LABEL: Software Engineer
+TARGET_DOMAIN: Systems Architecture, Backend/Full-Stack Engineering, and Distributed Systems
+
+CORE SKILLS REQUIRED:
+- Object-Oriented Programming (OOP) paradigms: encapsulation, inheritance, polymorphism, abstraction
+- SOLID design principles: Single Responsibility, Open-Closed, Liskov Substitution, Interface Segregation, Dependency Inversion
+- Data structures: arrays, linked lists, hash tables, binary trees, graphs, heaps, tries
+- Algorithmic analysis: Big-O time and space complexity, asymptotic notation, algorithm optimization
+- System design: horizontal/vertical scaling, load balancing, caching tiers, microservices vs monoliths
+- API design and contracts: RESTful architectures, GraphQL schemas, gRPC service definitions (Protobuf)
+- Concurrency and parallelism: multithreading, multiprocessing, asynchronous event loops, race conditions
+- Memory management: stack vs heap, garbage collection mechanics, pointers, memory leak prevention
+- Database architecture: relational database schema design, normalization (1NF to 3NF), denormalization
+- Database internals: B-Tree indexing, execution query planners, ACID properties, isolation levels
+- Distributed data stores: NoSQL paradigms, key-value stores, document databases, CAP theorem
+- Messaging and event streaming: publish/subscribe patterns, message queues, dead-letter queues, idempotent consumers
+- Security engineering: OWASP Top 10 prevention (SQL injection, XSS, CSRF), JWT authentication, OAuth2 flows
+- Test-driven engineering: unit testing, integration testing, end-to-end testing, mock objects, test fixtures
+- Code refactoring: identifying code smells, continuous integration hygiene, technical debt mitigation
+
+TOOLS & TECHNOLOGIES:
+- Backend programming languages: Python, Java, Go, C#, TypeScript, C++
+- Web frameworks: FastAPI, Django, Spring Boot, Express.js, NestJS, Go Gin, ASP.NET Core
+- Frontend technologies: JavaScript (ES6+), TypeScript, React, Next.js, HTML5, CSS3, Tailwind CSS
+- Relational databases: PostgreSQL, MySQL, SQLite, Microsoft SQL Server
+- NoSQL & caching databases: Redis, MongoDB, Cassandra, DynamoDB, Elasticsearch
+- Message brokers & streaming: Apache Kafka, RabbitMQ, Redis Pub/Sub, AWS SQS/SNS
+- API tooling: Postman, Swagger/OpenAPI, Insomnia, Apollo GraphQL Studio
+- Testing frameworks: Pytest, JUnit, Jest, Mocha, Playwright, Cypress, Testcontainers
+- Build tools & package managers: npm, pnpm, Maven, Gradle, Poetry, Cargo, pip
+- Code analysis & formatting: ESLint, Prettier, Black, Flake8, SonarQube, MyPy
+- Development environments: Docker, Linux CLI, Git, GitHub, GitLab, VS Code, IntelliJ IDEA
+
+SYSTEM & CLOUD COMPETENCIES:
+- Containerization: building lightweight production application containers using Docker multi-stage builds
+- Cloud native patterns: twelve-factor app methodology, externalized configuration, graceful shutdowns
+- Distributed caching: cache-aside, write-through, write-back strategies, cache invalidation policies (TTL, LRU)
+- Database performance tuning: slow query logging, connection pooling, read replicas, table partitioning
+- Resiliency engineering: circuit breakers, exponential backoff with jitter, retry budgets, bulkheads
+- Cloud service integrations: object storage uploads, cloud managed queues, serverless function runtimes
+- Telemetry integration: structured JSON application logging, distributed tracing with OpenTelemetry spans
+- High-concurrency network programming: non-blocking I/O, WebSockets, Server-Sent Events (SSE)
+
+SOFTWARE LIFECYCLE & COLLABORATION:
+- Git workflows: feature branching, trunk-based development, rebasing, pull requests, resolving merge conflicts
+- Code reviews: evaluating pull requests for correctness, performance, edge-case coverage, and style guides
+- Agile development: sprint planning, estimating story points, identifying blockers, retrospectives
+- Technical documentation: writing architectural decision records (ADRs), API specifications, system diagrams
+- Debugging & profiling: step-through debugging, memory profiling, CPU flame graphs, reading core dumps
+- Production support: debugging production logs, investigating bug reports, hotfix deployment procedures
+
+EXPECTED PROJECT DEPTH:
+- End-to-end full-stack or backend application running decoupled frontend and backend services
+- Scalable microservice exposing REST and gRPC endpoints documented with an OpenAPI/Swagger interface
+- Secure authentication layer using JWT access/refresh token pairs stored securely with bcrypt hashing
+- Asynchronous background task processing using a persistent queue like Celery or BullMQ backed by Redis
+- Relational database schema with complex foreign key constraints, migration scripts, and indexing benchmarks
+- Comprehensive test suite including unit tests with high code coverage and automated integration tests
+- Dockerized local environment with docker-compose orchestrating database, cache, broker, and app services
+- Robust error handling middleware catching runtime exceptions and returning standardized RFC-7807 error envelopes
+
+CODE QUALITY & ENGINEERING STANDARDS:
+- Clean code architecture separating presentation, service/business logic, and data access layers
+- Strict static typing across the entire codebase to prevent runtime type exceptions
+- Elimination of hardcoded secrets or configurations by strictly relying on environment variables
+- Deterministic database migrations ensuring safe forward and backward schema evolution
+- Comprehensive code documentation including docstrings, function signatures, and clear inline comments

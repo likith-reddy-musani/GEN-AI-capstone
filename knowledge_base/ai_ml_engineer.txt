@@ -1,0 +1,72 @@
+ROLE: Artificial Intelligence & Machine Learning Engineer
+ROLE_LABEL: AI/ML Engineer
+TARGET_DOMAIN: Production Machine Learning, Deep Learning, and Generative Systems
+
+CORE SKILLS REQUIRED:
+- Supervised and unsupervised machine learning algorithms (classification, regression, clustering)
+- Deep learning architectures: Convolutional Neural Networks (CNNs), Recurrent Neural Networks (RNNs, LSTMs)
+- Transformer architecture, self-attention mechanisms, and multi-head attention pipelines
+- Statistical hypothesis testing, probability distributions, variance analysis, and experimental design
+- Feature engineering, outlier detection, scaling, imputation, and categorical encoding strategies
+- Loss function optimization: cross-entropy, focal loss, contrastive loss, mean squared error
+- Optimization algorithms: SGD, Adam, AdamW, RMSProp, learning rate scheduling, warmup steps
+- Natural Language Processing (NLP): tokenization, Byte-Pair Encoding, lemmatization, TF-IDF, embeddings
+- Retrieval-Augmented Generation (RAG): chunking strategies, dense retrieval, re-ranking, query expansion
+- Large Language Model (LLM) fine-tuning: LoRA, QLoRA, full parameter fine-tuning, PEFT techniques
+- Computer Vision: object detection (YOLO, Faster R-CNN), image segmentation (U-Net, Mask R-CNN)
+- Model evaluation: precision, recall, F1-score, ROC-AUC, PR-AUC, BLEU, ROUGE, perplexity
+- Vector similarity search metrics: cosine distance, dot product, Euclidean distance, HNSW indexing
+- Guardrails, prompt engineering, hallucination suppression, and structured JSON output enforcement
+- Quantization methods: INT8, INT4, AWQ, GPTQ, GGUF model serialization formats
+
+TOOLS & TECHNOLOGIES:
+- Programming languages: Python, C++, SQL, Bash scripting
+- Deep learning frameworks: PyTorch, TensorFlow, Keras, JAX
+- Data processing libraries: NumPy, Pandas, Polars, SciPy, Scikit-learn
+- LLM orchestration: LangChain, LlamaIndex, LiteLLM, Guidance, Outlines
+- Local and cloud LLM runtimes: Ollama, vLLM, TensorRT-LLM, TGI (Text Generation Inference)
+- Hugging Face ecosystem: Transformers, Datasets, Accelerate, PEFT, TRL, Tokenizers
+- Vector databases: ChromaDB, Pinecone, Milvus, Qdrant, Weaviate, pgvector
+- Experiment tracking: Weights & Biases, MLflow, Comet ML, TensorBoard
+- Feature stores: Feast, Hopsworks, Tecton
+- Serving frameworks: TorchServe, Triton Inference Server, FastAPI, Ray Serve
+- Containerization: Docker, Podman, NVIDIA Container Toolkit (nvidia-docker)
+- Data versioning: DVC, LakeFS, Git LFS
+- Distributed training: DeepSpeed, PyTorch FSDP (Fully Sharded Data Parallel), Ray Train
+- Data annotation & labeling: Label Studio, CVAT, Prodigy
+- Profiling & acceleration: NVIDIA Nsight, PyTorch Profiler, ONNX Runtime, OpenVINO
+
+CLOUD & SYSTEM COMPETENCIES:
+- GPU cluster orchestration: multi-node distributed training using NCCL and SLURM
+- NVIDIA CUDA programming fundamentals, cuDNN integration, and GPU memory management
+- Cloud ML platforms: AWS SageMaker, GCP Vertex AI, Azure Machine Learning
+- Cost optimization: spot instance interruption handling, mixed-precision (FP16/BF16) execution
+- High-throughput asynchronous batch inference pipelines on cloud compute clusters
+- Storage architectures: S3, GCS, Cloud Storage bucket mounting, parallel high-speed IOPS
+- Secure API key management, enterprise role-based access control, and model registry governance
+- Edge deployment: TensorRT export, CoreML conversion, edge device quantization
+
+MLOPS & OBSERVABILITY CRITERIA:
+- Continuous Integration & Continuous Delivery (CI/CD) pipelines for automated model re-training
+- Data drift detection: Population Stability Index (PSI), Kolmogorov-Smirnov tests, Evidently AI
+- Concept drift monitoring and automated retraining triggers on production pipelines
+- Model registry lifecycle management: staging, champion/challenger patterns, automated rollback
+- Telemetry & metrics logging: Prometheus metrics scraping, Grafana model latency dashboards
+- Logging LLM execution traces: LangSmith, Arize Phoenix, OpenInference, OpenTelemetry
+
+EXPECTED PROJECT DEPTH:
+- End-to-end local RAG pipeline with hybrid search (BM25 + dense embedding vectors)
+- Document ingestion parser handling PDFs, Markdown, and TXT with recursive text chunking
+- Cross-encoder reranker stage deployed downstream of vector retrieval to boost MRR (Mean Reciprocal Rank)
+- Custom LoRA adapter fine-tuning on an open-weights LLM using synthetic instruction datasets
+- High-concurrency FastAPI microservice wrapping a quantized model via vLLM with streaming endpoints
+- Automated performance benchmarks documenting TTFT (Time To First Token) and throughput (Tokens Per Second)
+- Full containerization of ingestion, indexing, and serving layers with docker-compose profiles
+- Rigorous evaluation suite measuring context relevancy, groundedness, and answer correctness using Ragas
+
+CODE QUALITY & ENGINEERING STANDARDS:
+- Modular, object-oriented Python structure with strict type hinting using Pydantic and typing modules
+- Pytest test coverage across data transformation, embedding generation, and prompt assembly steps
+- Idempotent data loaders with robust exception handling and comprehensive runtime logging
+- Deterministic seeding across all random number generators for reproducible experiment runs
+- Thorough README documentation outlining environment setup, model weights acquisition, and CLI commands
