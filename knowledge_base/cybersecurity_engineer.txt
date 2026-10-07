@@ -1,0 +1,68 @@
+ROLE: Cybersecurity Engineer
+ROLE_LABEL: Cybersecurity Engineer
+TARGET_DOMAIN: Security Operations, Threat Modeling, Application Security, and Cloud Defense
+
+CORE SKILLS REQUIRED:
+- Threat modeling frameworks: STRIDE, DREAD, PASTA, attack trees, and mitigation planning
+- Network security & protocols: TCP/IP packet inspection, TLS/SSL handshake analysis, DNSSEC, IPSec
+- Vulnerability assessment & penetration testing (VAPT): manual exploitation, scanning, remediation
+- Application Security (AppSec): OWASP Top 10 web vulnerabilities (SQLi, XSS, SSRF, CSRF, IDOR)
+- Cryptography fundamentals: symmetric/asymmetric encryption, hashing (SHA-256), HMAC, digital signatures
+- Identity and Access Management (IAM): Role-Based Access Control (RBAC), ABAC, SAML 2.0, OAuth 2.0, OIDC
+- Security Information and Event Management (SIEM): log ingestion, query formulation, alert tuning
+- Endpoint Detection and Response (EDR): host telemetry analysis, behavioral anomaly detection, containment
+- Incident response lifecycle: identification, containment, eradication, recovery, lessons learned
+- Malware analysis basics: static disassembly, dynamic sandboxing, string extraction, IOC extraction
+- Secure Software Development Lifecycle (SSDLC): integrating static and dynamic code gates into CI/CD
+- Cloud security posture: least-privilege policies, security groups, VPC flow logs, cloud audit trails
+- Zero Trust Architecture: micro-segmentation, continuous identity verification, software-defined perimeters
+- Compliance & regulatory frameworks: NIST Cybersecurity Framework, CIS Controls, ISO 27001, SOC 2
+- Forensic analysis: volatile memory capture, filesystem timelines, disk image acquisition, PCAP triage
+
+TOOLS & TECHNOLOGIES:
+- Network analysis & sniffing: Wireshark, tcpdump, Nmap, Zeek, Suricata, Snort
+- Vulnerability scanners: Nessus, OpenVAS, Qualys, Nikto
+- Web penetration testing: Burp Suite Professional, OWASP ZAP, Postman, sqlmap
+- SIEM & telemetry platforms: Splunk, Elastic Security, Microsoft Sentinel, Wazuh
+- Application security scanners (SAST/DAST): SonarQube, Snyk, Semgrep, Checkmarx, Trivy
+- Cloud native security tools: AWS GuardDuty, AWS Security Hub, GCP Security Command Center, Falco
+- Scripting & automation: Python (Scapy, Requests, Cryptography), Bash, PowerShell
+- Exploit frameworks & reverse engineering: Metasploit, Ghidra, IDA Free, Radare2
+- Identity & secret vaults: HashiCorp Vault, CyberArk, Okta, Active Directory, FreeIPA
+- Endpoint & host defense: CrowdStrike Falcon, Microsoft Defender for Endpoint, OSquery
+- Threat intelligence feeds: MISP, VirusTotal, AlienVault OTX, MITRE ATT&CK Navigator
+
+CLOUD & SYSTEM COMPETENCIES:
+- AWS Security Architecture: IAM policy simulation, KMS envelope encryption, CloudTrail integrity
+- Container & Kubernetes defense: image signing with Cosign, admission controllers, OPA Gatekeeper
+- Linux system hardening: PAM configuration, disabling root SSH, iptables/nftables, SELinux, AppArmor
+- Windows domain security: Kerberos authentication, pass-the-hash detection, GPO enforcement
+- Web Application Firewall (WAF) rule authoring: rate limiting, bot detection, geo-blocking
+- Public key infrastructure (PKI): managing internal certificate authorities (CA), certificate lifecycle
+- Infrastructure as Code security: tfsec, Checkov, Terrascan for Terraform state audit
+- Network isolation: designing secure DMZ, air-gapped subnets, transit gateway security inspection
+
+DEFENSIVE DRILLS, INCIDENT HANDLING & METRICS:
+- Mapping adversary behavior techniques directly to MITRE ATT&CK enterprise tactics and sub-techniques
+- Creating automated SOAR playbooks to quarantine compromised nodes and revoke active sessions
+- Measuring defensive efficiency: Mean Time to Detect (MTTD), Mean Time to Remediate (MTTR)
+- Conducting tabletop simulations: ransomware scenarios, insider threat exfiltration, credential leakage
+- Implementing honeytokens and canary credentials inside production networks to identify reconnaissance
+- Authoring actionable security advisories and CVE vulnerability assessment reports for developers
+
+EXPECTED PROJECT DEPTH:
+- Fully automated DevSecOps CI/CD pipeline blocking commits on SAST vulnerabilities and hardcoded secrets
+- Deployed Wazuh or Elastic SIEM lab collecting auditd, Sysmon, and auth logs across multiple endpoints
+- Custom Python detection engine parsing Suricata alerts to identify automated brute-force attacks
+- Comprehensive threat model of a distributed microservices banking architecture using STRIDE
+- Hardened Linux server deployment automated via Ansible applying CIS Level 2 benchmark baselines
+- End-to-end vulnerability assessment report covering an intentionally vulnerable web application (DVWA)
+- Cloud security audit script leveraging AWS Boto3 to detect public S3 buckets, open security groups, and root keys
+- Incident response playbook covering triage, containment, and post-mortem analysis of a simulated breach
+
+CODE QUALITY & ENGINEERING STANDARDS:
+- Modular Python scripting with strict error handling to avoid noisy runtime crashes during active scans
+- Secure coding standards adherence: parameterization of all inputs, avoidance of dangerous eval functions
+- Comprehensive inline documentation explaining the cryptographic assumptions and security threat context
+- Version-controlled detection rules written in standardized Sigma or YARA formats with test fixtures
+- Responsible disclosure documentation practices adhering to industry vulnerability handling guidelines
