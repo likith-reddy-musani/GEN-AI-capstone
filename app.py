@@ -205,6 +205,77 @@ EXPECTED PROJECT DEPTH:
 - Comparison of at least two modelling approaches with analysis
 """,
 
+    "cybersecurity_engineer.txt": """\
+ROLE: Cybersecurity Engineer
+ROLE_LABEL: Cybersecurity Engineer
+
+CORE SKILLS REQUIRED:
+- Network security: firewalls, IDS/IPS, VPNs, zero-trust architecture
+- Security monitoring & SIEM: Splunk, QRadar, Sentinel, Elastic Stack
+- Incident response: forensics, malware analysis, containment, remediation
+- Vulnerability management: scanning, patching, risk assessment (CVSS)
+- Encryption & PKI: AES, RSA, TLS/SSL, certificate management
+- Security frameworks & compliance: NIST CSF, ISO 27001, CIS Benchmarks, SOC2
+- Cloud security: AWS Security Hub, Azure Security Center, GCP Security Command Center
+- Identity & access management: SSO, MFA, OAuth 2.0, SAML, RBAC/ABAC
+
+TOOLS & TECHNOLOGIES:
+- Security tools: Burp Suite, OWASP ZAP, Metasploit, Nmap, Wireshark
+- Scripting: Python, PowerShell, Bash for automation and forensics
+- Endpoint protection: CrowdStrike, SentinelOne, Microsoft Defender
+- Secure coding: SAST/DAST integration (SonarQube, Checkmarx, Veracode)
+- Container security: Twistlock, Sysdig, Falco
+
+CLOUD/SYSTEM COMPETENCIES:
+- Design and implement security controls for cloud infrastructure (IaC security)
+- Conduct red team/blue team exercises and penetration testing
+- Develop security policies, procedures, and incident response playbooks
+- Implement DevSecOps pipelines with embedded security gates
+- Security architecture review and threat modeling (STRIDE, DREAD)
+
+EXPECTED PROJECT DEPTH:
+- Full incident response plan with tabletop exercise documentation
+- Security audit report with findings and remediation roadmap
+- Security automation script (e.g., automated log analysis, threat detection)
+- Vulnerability assessment of a live environment with prioritized findings
+- Security hardening guide for a specific system or application
+""",
+
+    "game_developer.txt": """\
+ROLE: Game Developer
+ROLE_LABEL: Game Developer
+
+CORE SKILLS REQUIRED:
+- Game engines: Unity (C#), Unreal Engine (C++/Blueprints), Godot (GDScript)
+- Graphics programming: WebGL, Vulkan, DirectX, OpenGL, shader programming (HLSL, GLSL)
+- Physics engines: PhysX, Havok, bullet physics integration
+- Networking for games: replication, lag compensation, matchmaking (Photon, Mirror, FishNet)
+- Performance optimisation: memory management, draw calls, batching, occlusion culling
+- Audio integration: FMOD, Wwise, spatial audio, sound design integration
+- Cross-platform development: mobile (iOS/Android), console, PC, VR/AR
+
+TOOLS & TECHNOLOGIES:
+- Version control for large assets: Perforce, Plastic SCM, Git LFS
+- CI/CD for games: automated builds, regression testing, performance profiling
+- Level design tools: Tiled, World Machine, Substance Designer
+- Animation: Maya, Blender, Mixamo, state machines, inverse kinematics
+- Testing: automated QA, bug tracking, playtest coordination
+
+CLOUD/SYSTEM COMPETENCIES:
+- Design scalable multiplayer game architecture (client-server, peer-to-peer)
+- Implement anti-cheat systems and server-side validation
+- Optimize game performance for target hardware (console, mobile, VR)
+- Integrate in-app purchases, analytics, and cloud save systems
+- Build and maintain dedicated game servers
+
+EXPECTED PROJECT DEPTH:
+- Completed game with polished gameplay loop and UX
+- Multiplayer implementation with player synchronization
+- Performance profiling report identifying and fixing bottlenecks
+- Level design document with gameplay flow and mechanics
+- Technical specification for engine integration or custom engine features
+""",
+
     "resume_improvement_rubric.txt": """\
 DOCUMENT TYPE: Resume Improvement Rubric
 DOC_TYPE: rubric
@@ -280,6 +351,8 @@ ROLE_DISPLAY_TO_TAG = {
     "Software Engineer":          "Software Engineer",
     "Data Analyst":               "Data Analyst",
     "AI/ML Engineer":             "AI/ML Engineer",
+    "Cybersecurity Engineer":     "Cybersecurity Engineer",
+    "Game Developer":             "Game Developer",
 }
 
 # ---------------------------------------------------------------------------
@@ -620,6 +693,16 @@ def analyze_resume(file_obj, selected_role: str) -> str:
 # ---------------------------------------------------------------------------
 
 ROLE_OPTIONS = list(ROLE_DISPLAY_TO_TAG.keys())
+
+# Reorder roles for better UX (new roles at the end)
+ROLE_OPTIONS = [
+    "Cloud & DevSecOps Engineer",
+    "Software Engineer",
+    "Data Analyst",
+    "AI/ML Engineer",
+    "Cybersecurity Engineer",
+    "Game Developer",
+]
 
 with gr.Blocks(title="Resume Analyzer") as demo:
 
