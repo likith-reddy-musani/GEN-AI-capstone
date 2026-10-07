@@ -1,5 +1,9 @@
-# GEN-AI-capstone 📄
+# GEN AI CAPSTONE PROJECT
 
+# Problem Statement 📄 : 
+Students often receive resumes with different formats an quickly identify missing skills, relevant experience, and area be improved.
+
+## Project Details:
 Resume Analyzer is a Gradio web app that reviews a resume against a selected
 technical role. It retrieves relevant role benchmarks and resume-improvement
 guidance, then uses a language model to produce a role-specific report.
