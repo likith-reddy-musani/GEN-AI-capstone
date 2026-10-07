@@ -903,5 +903,7 @@ with gr.Blocks(title="Resume Analyzer") as demo:
 if __name__ == "__main__":
     # Pre-warm: create knowledge base files and index into ChromaDB before
     # the first user request so the initial analysis is fast.
+    print("[Server] Initializing Knowledge Base...", flush=True)
     get_kb_store()
-    demo.launch(css=_CSS)
+    print("[Server] Launching Gradio UI on http://127.0.0.1:7860 ...", flush=True)
+    demo.launch(server_name="127.0.0.1", server_port=7860, css=_CSS)
