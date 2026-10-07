@@ -14,6 +14,7 @@ import os
 import re
 import shutil
 import tempfile
+from dotenv import load_dotenv
 
 import gradio as gr
 from langchain_text_splitters import RecursiveCharacterTextSplitter   
@@ -27,14 +28,23 @@ from langchain_core.documents import Document
 # ---------------------------------------------------------------------------
 # ⚙️  CONFIGURATION
 # ---------------------------------------------------------------------------
-API_KEY    = os.environ.get("NEXUS_API_KEY")
-if not API_KEY:
-    raise RuntimeError("Set the NEXUS_API_KEY environment variable before launching the app.")
-BASE_URL   = "https://nexusapi.navigatelabs.ai"
-MODEL_NAME = "nova-micro"
+# Load environment variables from .env file
+load_dotenv()
 
-# Embedding model via Nexus AI (OpenAI-compatible)
-EMBEDDING_MODEL = "text-embedding-3-small"   # change to whatever Nexus AI exposes
+API_KEY = os.environ.get("NEXUS_API_KEY")
+if not API_KEY:
+    raise RuntimeError(
+        "❌ API key not found.\n\n"
+        "Create a .env file in the project root with:\n"
+        "  NEXUS_API_KEY=your-api-key-here\n"
+        "  BASE_URL=https://nexusapi.navigatelabs.ai\n"
+        "  MODEL_NAME=nova-micro\n\n"
+        "Or set the NEXUS_API_KEY environment variable."
+    )
+
+BASE_URL = os.environ.get("BASE_URL", "https://nexusapi.navigatelabs.ai")
+MODEL_NAME = os.environ.get("MODEL_NAME", "nova-micro")
+EMBEDDING_MODEL = os.environ.get("EMBEDDING_MODEL", "text-embedding-3-small")
 
 # ---------------------------------------------------------------------------
 # 🔌  LLM & EMBEDDINGS
