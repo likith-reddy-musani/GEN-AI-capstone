@@ -1,6 +1,6 @@
 # GEN AI CAPSTONE PROJECT
 
-# Problem Statement 📄 : 
+## Problem Statement 📄 : 
 Students often receive resumes with different formats an quickly identify missing skills, relevant experience, and area be improved.
 
 ## Project Details:
