@@ -10,9 +10,10 @@ guidance, then uses a language model to produce a role-specific report.
 
 ## 👥 Team Members
 
-- Musani Likith Reddy (RA2511028020082)
-- Sahid Saroj Bastia (RA2511028020086)
-- Aditya Kumar Singh (RA2511028020094)
+- Musani Likith Reddy
+- Sahid Saroj Bastia 
+- Aditya Kumar Singh 
+DEPT: BTECH CSE with specialisation CLOUD COMPUTING | SRMIST RAMAPURAM
 
 ## ✨ Features
 
