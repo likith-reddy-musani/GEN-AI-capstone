@@ -1,54 +1,23 @@
-# GEN AI CAPSTONE PROJECT
+# Resume Analyzer
 
-## Problem Statement 📄 : 
-Students often receive resumes with different formats an quickly identify missing skills, relevant experience, and area be improved.
+A Gen-AI capstone app that compares a resume with role-specific benchmarks and gives actionable feedback.
 
-## Project Details:
-Resume Analyzer is a Gradio web app that reviews a resume against a selected
-technical role. It retrieves relevant role benchmarks and resume-improvement
-guidance, then uses a language model to produce a role-specific report.
-
-## 👥 Team Members
-
-- Musani Likith Reddy (RA2511028020082)
-- Sahid Saroj Bastia (RA2511028020086)
-- Aditya Kumar Singh (RA2511028020094)
-
-## ✨ Features
+## Features
 
 - Accepts PDF and DOCX resumes.
-- Compares resumes with benchmarks for six technical roles.
-- Presents missing or unclear skills, relevant experience, and improvement
-	suggestions in separate result panels.
-- Uses a local text knowledge base, Chroma vector search, and a configurable
-	OpenAI-compatible API for embeddings and chat completions.
+- Reports missing skills, relevant experience, and areas to improve.
+- Supports six technical roles:
+  - Cloud & DevSecOps Engineer
+  - Software Engineer
+  - Data Analyst
+  - AI/ML Engineer
+  - Cybersecurity Engineer
+  - Game Developer
+- Uses a local knowledge base and Hugging Face embeddings, with a configurable chat API for generating feedback.
 
-## 🎯 Supported Roles
+## Setup
 
-- Cloud & DevSecOps Engineer
-- Software Engineer
-- Data Analyst
-- AI/ML Engineer
-- Cybersecurity Engineer
-- Game Developer
-
-## 🔎 How Analysis Works
-
-1. The app extracts text from the uploaded PDF or DOCX and splits it into
-	 overlapping chunks.
-2. It searches the role benchmark and resume-improvement rubric for relevant
-	 passages.
-3. It uses the benchmark to retrieve matching passages from the resume.
-4. It sends the selected role and retrieved text to the configured chat model,
-	 which generates the report shown in the interface.
-
-The knowledge-base vector store is held in memory and rebuilt when the app
-starts.
-
-## ⚙️ Setup
-
-Requires Python 3.10 or newer. From the project directory, create a virtual
-environment and install the dependencies:
+Requires Python 3.10 or newer. From the project directory, create a virtual environment and install the dependencies:
 
 ```powershell
 py -m venv .venv
@@ -59,82 +28,47 @@ python -m pip install -r requirements.txt
 
 ### Configure the API
 
-The app reads its API key from the `NEXUS_API_KEY` environment variable. In
-PowerShell, set it in the terminal where you will run the app:
+The app loads `.env` from the project directory. Add your API key there:
 
-```powershell
-$env:NEXUS_API_KEY = "your-api-key"
+```text
+NEXUS_API_KEY=your-api-key
 ```
 
-The variable applies only to that PowerShell session. Do not put a real key in
-source code, a committed file, or a shared screenshot. The `.gitignore` ignores
-`.env` files, but this app does not load `.env` automatically.
-
-The default `BASE_URL`, `MODEL_NAME`, and `EMBEDDING_MODEL` are configured near
-the top of `app.py`. Change them to values supported by your OpenAI-compatible
-API provider. The app uses the API for both embeddings and chat completions.
-If a real key was committed or shared, revoke it and create a replacement;
-removing it from the latest file does not erase it from Git history.
-
-An optional Hugging Face embeddings fallback is included as commented code in
-`app.py`. To use it, enable the fallback code path and disable the API-based
-embeddings initialization. Its model may download the first time it runs.
+`BASE_URL` and `MODEL_NAME` are optional; the app uses the defaults configured in `app.py` when they are omitted. Keep `.env` private and do not commit it.
 
 ### Access the app and get results
+
+Start the app:
 
 ```powershell
 python app.py
 ```
 
-After configuring the API key, run the command above. Wait for Gradio to finish
-starting, then open the local webpage:
+When Gradio starts, open [http://127.0.0.1:7860](http://127.0.0.1:7860). Keep the terminal running while you use the app.
 
-[http://127.0.0.1:7860](http://127.0.0.1:7860)
+1. Upload a PDF or DOCX resume. You can try the included [sample resume](./sample_resume.docx).
+2. Select a target role.
+3. Click **Analyze Resume**.
+4. Review the **Missing Skills**, **Relevant Experience**, and **Areas to Improve** cards.
 
-To get an analysis:
+The app builds its knowledge-base index during startup. The local embedding model may download the first time it runs.
 
-1. Upload a resume in PDF or DOCX format. You can try the included
-   [sample resume](./sample_resume.docx).
-2. Choose the target role that best matches the resume.
-3. Select **Analyze Resume** and wait for the report.
-4. Review the **Missing Skills**, **Relevant Experience**, and **Areas to Improve**
-   result cards.
+## Screenshot
 
-The app prepares its knowledge base and builds the vector index during startup.
-Keep the terminal running while you use the webpage.
+![Resume Analyzer application screenshot](./resume-analyzer-screenshot.jpeg)
 
+## Knowledge Base
 
-## 📸 Screenshot
+The `knowledge_base/` directory contains the role benchmarks and resume-improvement rubric. The app indexes `.txt` and `.md` files there. Edit or add files to change the analysis guidance, then restart the app to rebuild the index. Default knowledge-base files are created when missing and are not overwritten.
 
-![Resume Analyzer application screenshot](./image.jpeg)
+## Privacy and limitations
 
-## 📚 Knowledge Base
+- Resume content is sent to the configured chat API to generate feedback. The embedding model runs locally.
+- Scanned or image-only PDFs are not supported because the app does not use OCR.
+- Review generated suggestions before applying them; feedback depends on the resume, knowledge base, and model response.
 
-The `knowledge_base/` directory contains role benchmarks and a resume
-improvement rubric. The app indexes `.txt` and `.md` files in this directory.
-Edit these files or add new ones to change the material used for analysis.
-Default files are created if missing; files that already exist are not
-overwritten. Restart the app after editing the knowledge base so it rebuilds
-the index.
+## Team
 
-## 🛡️ Privacy and Limitations
-
-- Resume text is sent to the configured embeddings and chat API endpoints. Do
-	not upload sensitive information unless you are authorized to share it with
-	that provider.
-- Scanned or image-only PDFs are not supported because the app extracts text
-	without OCR.
-- Generated feedback depends on the uploaded text, knowledge-base content, and
-	model response. Review suggestions before using them.
-- The configured provider must support the selected chat and embedding models.
-	Authentication, endpoint, or model configuration errors are shown in the
-	app's status area.
-
-## 📂 Project Files
-
-```text
-app.py                              Gradio interface and analysis pipeline
-requirements.txt                    Python dependencies
-knowledge_base/                     Role benchmarks and improvement rubric
-```
-
+- Musani Likith Reddy (RA2511028020082)
+- Sahid Saroj Bastia (RA2511028020086)
+- Aditya Kumar Singh (RA2511028020094)
