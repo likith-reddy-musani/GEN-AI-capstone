@@ -9,10 +9,7 @@ venv/
 env/
 ENV/
 
-# Local environment variables and secrets
-.env
-.env.*
-!.env.example
+
 
 # Python tool caches
 .pytest_cache/
