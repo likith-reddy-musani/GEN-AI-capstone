@@ -965,6 +965,18 @@ code, pre {
     gap: 12px;
 }
 
+/* Keep the role picker and its popup above neighboring Gradio components. */
+#role-dropdown {
+    position: relative !important;
+    z-index: 10 !important;
+    overflow: visible !important;
+}
+
+#input-panel,
+#controls-col {
+    overflow: visible !important;
+}
+
 #role-dropdown .wrap, #role-dropdown select, #role-dropdown input {
     background: rgba(15, 23, 42, 0.9) !important;
     border: 1px solid rgba(148, 163, 184, 0.18) !important;
