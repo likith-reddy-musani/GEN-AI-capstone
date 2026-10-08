@@ -1321,26 +1321,57 @@ code, pre {
 }
 """
 
-with gr.Blocks(title="Resume Analyzer") as demo:
+# Fresh visual system for the redesigned interface.
+_CSS = """
+:root { --ink:#17231f; --muted:#68756f; --line:#dce5df; --paper:#f5f7f4; --green:#176b52; --mint:#e5f2ec; }
+* { box-sizing:border-box; font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif !important; }
+body,.gradio-container { background:var(--paper) !important; color:var(--ink) !important; max-width:1180px !important; margin:auto !important; }
+.gradio-container { padding:28px 24px 40px !important; }
+#header-card { background:#143d32 !important; border:0 !important; border-radius:22px !important; padding:34px 38px !important; margin-bottom:20px !important; box-shadow:none !important; }
+#header-card h1 { color:#fff !important; -webkit-text-fill-color:#fff !important; font-size:clamp(2rem,4vw,3.2rem) !important; letter-spacing:-.04em; }
+#header-card p { color:#d2e6dc !important; }
+.header-tag { color:#a8d8c2 !important; background:transparent !important; border:0 !important; padding:0 !important; }
+.workflow-strip { color:var(--muted) !important; padding:4px 2px 16px !important; }
+.workflow-number { color:var(--green) !important; background:var(--mint) !important; border-color:#c5dfd1 !important; }
+#input-panel,.result-card { background:#fff !important; border:1px solid var(--line) !important; border-radius:18px !important; padding:22px !important; box-shadow:0 8px 28px rgba(29,58,43,.05) !important; }
+#input-panel { margin-bottom:16px !important; overflow:visible !important; }
+#controls-col { gap:12px; }
+#role-dropdown { position:relative !important; z-index:20 !important; overflow:visible !important; }
+#role-dropdown input,#role-dropdown .wrap { background:#fff !important; color:var(--ink) !important; border-color:var(--line) !important; border-radius:12px !important; }
+#file-uploader { background:#f8fbf9 !important; border:1px dashed #a9c6b7 !important; border-radius:12px !important; min-height:150px !important; }
+#analyze-btn { background:var(--green) !important; color:white !important; border:0 !important; border-radius:11px !important; font-weight:700 !important; min-height:48px; }
+#analyze-btn:hover { background:#105740 !important; }
+#reset-btn { border-radius:11px !important; border:1px solid var(--line) !important; background:#f5f7f4 !important; color:var(--ink) !important; }
+#status-bar { margin:12px 0 18px; }
+.status-pill { display:inline-flex; padding:9px 13px; border-radius:999px; background:var(--mint); color:var(--green); font-size:.88rem; }
+.result-card { min-height:250px !important; }
+.card-title { font-weight:750; font-size:1rem; color:var(--ink); margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--line); }
+.result-card p,.result-card li { color:#34433c !important; line-height:1.65 !important; }
+.result-card h1,.result-card h2,.result-card h3 { color:var(--ink) !important; font-size:1rem !important; }
+.footer-clean { color:var(--muted) !important; }
+@media(max-width:760px) { .gradio-container { padding:14px !important; } #header-card { padding:25px 22px !important; } #input-panel,.result-card { padding:16px !important; } .workflow-strip { flex-wrap:wrap; } }
+"""
+
+with gr.Blocks(title="Resume Analyzer", theme=gr.themes.Base(), css=_CSS) as demo:
 
     # ── Header ──────────────────────────────────────────────────────────────
     with gr.Group(elem_id="header-card"):
         gr.HTML("""
             <div class="morph-orb"></div>
             <div class="header-inner">
-                <div class="header-tag"><span class="morph-tag-dot"></span>GEN-AI CAPSTONE</div>
-                <h1>Resume Analyzer</h1>
-                <p>Upload a resume and select a target technical role for instant gap analysis and bullet improvements.</p>
+                <div class="header-tag">RESUME INSIGHTS · GEN-AI CAPSTONE</div>
+                <h1>Make your next move<br>with a stronger resume.</h1>
+                <p>Choose a target role and get a focused review of your skills, experience, and resume bullet points.</p>
             </div>
         """, container=False)
 
     gr.HTML("""
         <div class="workflow-strip" aria-label="How it works">
-            <span class="workflow-step"><span class="workflow-number">1</span>Upload your resume</span>
+            <span class="workflow-step"><span class="workflow-number">1</span>Add your resume</span>
             <span class="workflow-divider"></span>
             <span class="workflow-step"><span class="workflow-number">2</span>Choose a target role</span>
             <span class="workflow-divider"></span>
-            <span class="workflow-step"><span class="workflow-number">3</span>Review your insights</span>
+            <span class="workflow-step"><span class="workflow-number">3</span>Explore your review</span>
         </div>
     """)
 
@@ -1349,7 +1380,7 @@ with gr.Blocks(title="Resume Analyzer") as demo:
         with gr.Row(equal_height=True):
             with gr.Column(scale=5):
                 file_input = gr.File(
-                    label="Upload Resume (.pdf or .docx)",
+                    label="Resume file - PDF or DOCX",
                     file_types=[".pdf", ".docx"],
                     file_count="single",
                     elem_id="file-uploader",
@@ -1359,7 +1390,7 @@ with gr.Blocks(title="Resume Analyzer") as demo:
                 role_dropdown = gr.Dropdown(
                     choices=ROLE_OPTIONS,
                     value=ROLE_OPTIONS[0],
-                    label="Target Role",
+                    label="Target role",
                     elem_id="role-dropdown",
                 )
                 with gr.Row():
@@ -1370,7 +1401,7 @@ with gr.Blocks(title="Resume Analyzer") as demo:
                         scale=3,
                     )
                     reset_btn = gr.Button(
-                        "Reset",
+                        "Clear",
                         elem_id="reset-btn",
                         variant="secondary",
                         scale=1,
