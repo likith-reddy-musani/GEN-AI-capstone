@@ -57,7 +57,7 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-## 🔐 Configure the API
+### Configure the API
 
 The app reads its API key from the `NEXUS_API_KEY` environment variable. In
 PowerShell, set it in the terminal where you will run the app:
@@ -80,15 +80,28 @@ An optional Hugging Face embeddings fallback is included as commented code in
 `app.py`. To use it, enable the fallback code path and disable the API-based
 embeddings initialization. Its model may download the first time it runs.
 
-## 🚀 Run
+### Access the app and get results
 
 ```powershell
 python app.py
 ```
 
-On startup, the app prepares the knowledge base and builds its vector index.
-Gradio prints a local URL in the terminal. Open it in a browser, upload a PDF or
-DOCX resume, select a target role, and click **Analyze Resume**.
+After configuring the API key, run the command above. Wait for Gradio to finish
+starting, then open the local webpage:
+
+[http://127.0.0.1:7860](http://127.0.0.1:7860)
+
+To get an analysis:
+
+1. Upload a resume in PDF or DOCX format. You can try the included
+   [sample resume](./sample_resume.docx).
+2. Choose the target role that best matches the resume.
+3. Select **Analyze Resume** and wait for the report.
+4. Review the **Missing Skills**, **Relevant Experience**, and **Areas to Improve**
+   result cards.
+
+The app prepares its knowledge base and builds the vector index during startup.
+Keep the terminal running while you use the webpage.
 
 
 ## 📸 Screenshot
