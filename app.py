@@ -1323,31 +1323,35 @@ code, pre {
 
 # Fresh visual system for the redesigned interface.
 _CSS = """
-:root { --ink:#17231f; --muted:#68756f; --line:#dce5df; --paper:#f5f7f4; --green:#176b52; --mint:#e5f2ec; }
+:root { --ink:#f3f0ff; --muted:#b6accf; --line:#493b67; --paper:#100d19; --violet:#8b5cf6; --violet-bright:#a78bfa; --panel:#1d172a; --panel-deep:#171222; --background-fill-primary:#100d19; --background-fill-secondary:#171222; --block-background-fill:#1d172a; --input-background-fill:#251d34; --border-color-primary:#493b67; }
 * { box-sizing:border-box; font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif !important; }
 body,.gradio-container { background:var(--paper) !important; color:var(--ink) !important; max-width:1180px !important; margin:auto !important; }
 .gradio-container { padding:28px 24px 40px !important; }
-#header-card { background:#143d32 !important; border:0 !important; border-radius:22px !important; padding:34px 38px !important; margin-bottom:20px !important; box-shadow:none !important; }
+.gradio-container .block,.gradio-container .form,.gradio-container .wrap,.gradio-container .container { background-color:#1d172a !important; }
+#header-card .html-container,#header-card .prose,#header-card .gradio-html { background-color:#251b38 !important; }
+#header-card { background:#251b38 !important; border:1px solid #554274 !important; border-radius:22px !important; padding:34px 38px !important; margin-bottom:20px !important; box-shadow:none !important; }
 #header-card h1 { color:#fff !important; -webkit-text-fill-color:#fff !important; font-size:clamp(2rem,4vw,3.2rem) !important; letter-spacing:-.04em; }
-#header-card p { color:#d2e6dc !important; }
-.header-tag { color:#a8d8c2 !important; background:transparent !important; border:0 !important; padding:0 !important; }
+#header-card p { color:#d9ccef !important; }
+.header-tag { color:#c4a9ff !important; background:#35264d !important; border:1px solid #654b8d !important; padding:5px 10px !important; }
 .workflow-strip { color:var(--muted) !important; padding:4px 2px 16px !important; }
-.workflow-number { color:var(--green) !important; background:var(--mint) !important; border-color:#c5dfd1 !important; }
-#input-panel,.result-card { background:#fff !important; border:1px solid var(--line) !important; border-radius:18px !important; padding:22px !important; box-shadow:0 8px 28px rgba(29,58,43,.05) !important; }
+.workflow-number { color:#eee7ff !important; background:#392957 !important; border-color:#7252a6 !important; }
+#input-panel,.result-card { background:var(--panel) !important; border:1px solid var(--line) !important; border-radius:18px !important; padding:22px !important; box-shadow:none !important; }
 #input-panel { margin-bottom:16px !important; overflow:visible !important; }
 #controls-col { gap:12px; }
 #role-dropdown { position:relative !important; z-index:20 !important; overflow:visible !important; }
-#role-dropdown input,#role-dropdown .wrap { background:#fff !important; color:var(--ink) !important; border-color:var(--line) !important; border-radius:12px !important; }
-#file-uploader { background:#f8fbf9 !important; border:1px dashed #a9c6b7 !important; border-radius:12px !important; min-height:150px !important; }
-#analyze-btn { background:var(--green) !important; color:white !important; border:0 !important; border-radius:11px !important; font-weight:700 !important; min-height:48px; }
-#analyze-btn:hover { background:#105740 !important; }
-#reset-btn { border-radius:11px !important; border:1px solid var(--line) !important; background:#f5f7f4 !important; color:var(--ink) !important; }
+#role-dropdown input,#role-dropdown .wrap,#role-dropdown > div { background:#251d34 !important; color:var(--ink) !important; border-color:#584771 !important; border-radius:12px !important; }
+#role-dropdown [role="listbox"],#role-dropdown [role="option"],#role-dropdown .options { background:#251d34 !important; color:var(--ink) !important; }
+#role-dropdown [role="option"]:hover { background:#44305f !important; }
+#file-uploader,#file-uploader > div,#file-uploader [data-testid] { background:var(--panel-deep) !important; color:var(--ink) !important; border:1px dashed #70579a !important; border-radius:12px !important; min-height:150px !important; }
+#analyze-btn { background:#7543d6 !important; color:white !important; border:1px solid #9b70f2 !important; border-radius:11px !important; font-weight:700 !important; min-height:48px; }
+#analyze-btn:hover { background:#8653e8 !important; }
+#reset-btn { border-radius:11px !important; border:1px solid #584771 !important; background:#302440 !important; color:var(--ink) !important; }
 #status-bar { margin:12px 0 18px; }
-.status-pill { display:inline-flex; padding:9px 13px; border-radius:999px; background:var(--mint); color:var(--green); font-size:.88rem; }
+.status-pill { display:inline-flex; padding:9px 13px; border-radius:999px; background:#302440 !important; color:#d8c3ff !important; border:1px solid #624b83; font-size:.88rem; }
 .result-card { min-height:250px !important; }
-.card-title { font-weight:750; font-size:1rem; color:var(--ink); margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--line); }
-.result-card p,.result-card li { color:#34433c !important; line-height:1.65 !important; }
-.result-card h1,.result-card h2,.result-card h3 { color:var(--ink) !important; font-size:1rem !important; }
+.card-title { font-weight:750; font-size:1rem; color:#e9ddff; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--line); }
+.result-card p,.result-card li { color:#d8d0e7 !important; line-height:1.65 !important; }
+.result-card h1,.result-card h2,.result-card h3 { color:#f3edff !important; font-size:1rem !important; }
 .footer-clean { color:var(--muted) !important; }
 @media(max-width:760px) { .gradio-container { padding:14px !important; } #header-card { padding:25px 22px !important; } #input-panel,.result-card { padding:16px !important; } .workflow-strip { flex-wrap:wrap; } }
 """
