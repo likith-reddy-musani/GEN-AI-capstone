@@ -10,6 +10,8 @@ Architecture:
   - Gradio minimal UI surfaces the markdown report
 """
 
+import hashlib
+import math
 import os
 import re
 import shutil
@@ -63,21 +65,10 @@ llm = ChatOpenAI(
 #     model=EMBEDDING_MODEL,
 # )
 
-# Using ChromaDB's built-in ONNX embedding function (Python 3.14 compatible,
-# avoids HuggingFaceEmbeddings PyTorch multiprocessing hang on Windows/Py3.14)
-from chromadb.utils.embedding_functions import ONNXMiniLM_L6_V2
-from langchain_core.embeddings import Embeddings as LCEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 
-class _ChromaONNXEmbeddings(LCEmbeddings):
-    """Thin LangChain Embeddings wrapper around ChromaDB's ONNXMiniLM_L6_V2."""
-    def __init__(self):
-        self._fn = ONNXMiniLM_L6_V2()
-    def embed_documents(self, texts):
-        return self._fn(texts)
-    def embed_query(self, text):
-        return self._fn([text])[0]
+embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
-embeddings = _ChromaONNXEmbeddings()
 
 # ---------------------------------------------------------------------------
 # 📂  KNOWLEDGE BASE CONTENT
@@ -679,7 +670,7 @@ def _split_report(report: str) -> tuple[str, str, str]:
     """
     import re as _re
     # Match section headers like "## 1. Missing Skills" or "## Missing Skills"
-    parts = _re.split(r"(?m)^##\s+\d*\.?\s*", report)
+    parts = _re.split(r"(m)^##\s+\d*\.\s*", report)
     # parts[0] is anything before the first ##, parts[1..3] are the sections
     sections = [p.strip() for p in parts if p.strip()]
 
@@ -702,6 +693,25 @@ def _split_report(report: str) -> tuple[str, str, str]:
     return missing, relevant, improve
 
 
+# ---------------------------------------------------------------------------
+# 🖥️  STAGE 5 — GRADIO UI
+# ---------------------------------------------------------------------------
+
+ROLE_OPTIONS = [
+    "Cloud & DevSecOps Engineer",
+    "Software Engineer",
+    "Data Analyst",
+    "AI/ML Engineer",
+    "Cybersecurity Engineer",
+    "Game Developer",
+]
+
+PLACEHOLDER_MISSING = "*Upload your resume and click **Analyze Resume** to identify missing skills.*"
+PLACEHOLDER_RELEVANT = "*Projects and achievements matching the role requirements will appear here.*"
+PLACEHOLDER_IMPROVE = "*Before & After bullet point transformations using the XYZ formula will appear here.*"
+STATUS_IDLE = '<div class="status-pill neutral">Ready to analyze your resume</div>'
+
+
 def analyze_resume(file_obj, selected_role: str) -> tuple[str, str, str, str]:
     """
     Main pipeline function called by Gradio.
@@ -713,7 +723,7 @@ def analyze_resume(file_obj, selected_role: str) -> tuple[str, str, str, str]:
         improve      — Areas to Improve section markdown
     """
     if file_obj is None:
-        return "⚠️ Please upload a resume file (.pdf or .docx).", "", "", ""
+        return "⚠️ Please upload a resume file (.pdf or .docx) to analyze.", "", "", ""
     if not selected_role:
         return "⚠️ Please select a target role from the dropdown.", "", "", ""
 
@@ -739,106 +749,564 @@ def analyze_resume(file_obj, selected_role: str) -> tuple[str, str, str, str]:
         return status, missing, relevant, improve
 
     except ValueError as ve:
-        msg = f"⚠️ {ve}"
-        return msg, "", "", ""
+        return f"⚠️ {ve}", "", "", ""
     except Exception as e:
-        msg = f"❌ Error: `{e}`\n\nCheck API key / base URL / model name at the top of `app.py`."
-        return msg, "", "", ""
+        return f"❌ Error: `{e}`", "", "", ""
 
 
-# ---------------------------------------------------------------------------
-# 🖥️  STAGE 5 — GRADIO UI
-# ---------------------------------------------------------------------------
+def reset_pipeline():
+    """Resets all inputs and results to initial state."""
+    return (
+        None,
+        ROLE_OPTIONS[0],
+        "",
+        PLACEHOLDER_MISSING,
+        PLACEHOLDER_RELEVANT,
+        PLACEHOLDER_IMPROVE,
+    )
 
-ROLE_OPTIONS = [
-    "Cloud & DevSecOps Engineer",
-    "Software Engineer",
-    "Data Analyst",
-    "AI/ML Engineer",
-    "Cybersecurity Engineer",
-    "Game Developer",
-]
 
 _CSS = """
-/* ── Page & outer wrapper background only ── */
-.gradio-container { background: #0f1117 !important; }
-body { background: #0f1117 !important; }
 
-/* ── Header card ── */
+:root {
+    --bg: #07111f;
+    --bg-soft: #0f172a;
+    --panel: rgba(15, 23, 42, 0.85);
+    --panel-strong: #101b2d;
+    --panel-alt: #0b1220;
+    --primary: #6d5ef6;
+    --primary-2: #8b5cf6;
+    --primary-3: #22d3ee;
+    --success: #34d399;
+    --warning: #fbbf24;
+    --danger: #f87171;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --border: rgba(148, 163, 184, 0.18);
+    --shadow: rgba(15, 23, 42, 0.58);
+}
+
+* {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    box-sizing: border-box;
+}
+
+html, body {
+    min-height: 100%;
+}
+
+body, .gradio-container {
+    background:
+        radial-gradient(circle at top left, rgba(109, 94, 246, 0.22), transparent 22%),
+        radial-gradient(circle at bottom right, rgba(34, 211, 238, 0.15), transparent 28%),
+        var(--bg) !important;
+    color: var(--text) !important;
+    max-width: 1280px !important;
+    margin: 0 auto !important;
+    padding: 24px 20px 48px !important;
+}
+
+code, pre {
+    font-family: 'JetBrains Mono', monospace !important;
+}
+
 #header-card {
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-    border: 1px solid #334155;
-    border-radius: 12px;
-    padding: 28px 32px 20px;
-    margin-bottom: 8px;
-}
-#header-card h1 { color: #f1f5f9; font-size: 1.9rem; margin: 0 0 6px; }
-#header-card p  { color: #94a3b8; margin: 0; font-size: 0.95rem; }
-
-/* ── Input panel ── */
-#input-panel {
-    background: #1e293b;
-    border: 1px solid #334155;
-    border-radius: 12px;
-    padding: 20px 24px;
+    background: linear-gradient(135deg, rgba(16, 27, 45, 0.92), rgba(15, 23, 42, 0.75));
+    border: 1px solid var(--border);
+    border-radius: 18px !important;
+    padding: 24px 28px !important;
+    margin-bottom: 18px !important;
+    position: relative !important;
+    overflow: hidden !important;
+    box-shadow: 0 18px 40px -28px rgba(109, 94, 246, 0.7);
+    animation: riseIn 650ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
 }
 
-/* ── Analyse button ── */
-#analyze-btn {
-    background: linear-gradient(90deg, #6366f1, #8b5cf6) !important;
-    color: #fff !important;
-    border: none !important;
-    border-radius: 8px !important;
-    font-size: 1rem !important;
-    font-weight: 600 !important;
-    padding: 12px 0 !important;
-    cursor: pointer;
-    transition: opacity 0.2s;
-}
-#analyze-btn:hover { opacity: 0.88; }
-
-/* ── Status bar ── */
-#status-bar { border-radius: 8px; padding: 0 4px; }
-
-/* ── Result column cards — all three identical base style ── */
-.result-card {
-    background: #1e293b !important;
-    border: 1px solid #334155 !important;
-    border-radius: 12px !important;
-    padding: 18px 20px !important;
-    min-height: 220px;
+#header-card .html-container,
+#header-card .prose,
+#header-card .gradio-html {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
 }
 
-/* ── Coloured top accent per card ── */
-#card-missing  { border-top: 3px solid #f87171 !important; }
-#card-relevant { border-top: 3px solid #34d399 !important; }
-#card-improve  { border-top: 3px solid #fbbf24 !important; }
-
-/* ── Section labels inside each card ── */
-.section-label {
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin: 0 0 12px !important;
+#header-card .html-container {
     padding: 0 !important;
 }
-.label-missing  { color: #f87171 !important; }
-.label-relevant { color: #34d399 !important; }
-.label-improve  { color: #fbbf24 !important; }
 
-/* ── Markdown text inside cards ── */
-.result-card p, .result-card li  { color: #cbd5e1 !important; font-size: 0.9rem; }
-.result-card h2, .result-card h3 { color: #f1f5f9 !important; }
-.result-card strong              { color: #e2e8f0 !important; }
-.result-card code                { background: #0f172a; color: #a5f3fc; padding: 1px 5px; border-radius: 4px; }
+.morph-orb {
+    position: absolute;
+    top: -36px;
+    right: -26px;
+    width: 180px;
+    height: 180px;
+    background: linear-gradient(135deg, rgba(109, 94, 246, 0.35), rgba(34, 211, 238, 0.18), rgba(139, 92, 246, 0.22));
+    filter: blur(30px);
+    pointer-events: none;
+    border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+    animation: morphBlob 9s ease-in-out infinite alternate;
+}
 
-/* ── Dropdown cursor ── */
-.gradio-dropdown,
-.gradio-dropdown *,
-.gradio-dropdown input,
-.gradio-dropdown svg,
-.gradio-dropdown li { cursor: pointer !important; }
+@keyframes morphBlob {
+    0% {
+        border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+        transform: rotate(0deg) scale(1);
+    }
+    33% {
+        border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%;
+        transform: rotate(120deg) scale(1.08);
+    }
+    66% {
+        border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%;
+        transform: rotate(240deg) scale(0.96);
+    }
+    100% {
+        border-radius: 50% 50% 30% 70% / 60% 40% 60% 40%;
+        transform: rotate(360deg) scale(1.04);
+    }
+}
+
+.header-inner {
+    position: relative;
+    z-index: 1;
+}
+
+.header-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #c4b5fd;
+    background: rgba(109, 94, 246, 0.1);
+    border: 1px solid rgba(129, 140, 248, 0.32);
+    border-radius: 999px;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.morph-tag-dot {
+    width: 7px;
+    height: 7px;
+    background: linear-gradient(135deg, #a78bfa, #22d3ee);
+    box-shadow: 0 0 12px rgba(167, 139, 250, 0.8);
+    display: inline-block;
+    border-radius: 50%;
+    animation: morphDot 3.2s ease-in-out infinite;
+}
+
+@keyframes morphDot {
+    0%, 100% {
+        border-radius: 50%;
+        transform: scale(1);
+    }
+    50% {
+        border-radius: 25% 75% 75% 25% / 25% 25% 75% 75%;
+        transform: scale(1.3) rotate(90deg);
+    }
+}
+
+#header-card h1 {
+    font-size: clamp(1.9rem, 2.5vw, 2.6rem) !important;
+    font-weight: 800 !important;
+    margin: 0 0 6px 0 !important;
+    letter-spacing: -0.04em;
+    background: linear-gradient(135deg, #f8fafc 10%, #c4b5fd 45%, #67e8f9 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: textMorphGradient 7s ease-in-out infinite alternate;
+}
+
+@keyframes textMorphGradient {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+#header-card p {
+    font-size: 0.94rem !important;
+    color: var(--muted) !important;
+    margin: 0 !important;
+    max-width: 820px;
+}
+
+#input-panel {
+    background: linear-gradient(180deg, rgba(16, 27, 45, 0.95), rgba(9, 16, 26, 0.92));
+    border: 1px solid var(--border);
+    border-radius: 16px !important;
+    padding: 22px !important;
+    margin-bottom: 16px !important;
+    box-shadow: 0 14px 35px -18px rgba(15, 23, 42, 0.9);
+    animation: riseIn 700ms 100ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+
+#file-uploader {
+    min-height: 126px !important;
+    border: 1.5px dashed rgba(148, 163, 184, 0.42) !important;
+    border-radius: 12px !important;
+    background: rgba(7, 17, 31, 0.9) !important;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease !important;
+    overflow: hidden;
+}
+
+#file-uploader:hover {
+    border-color: rgba(129, 140, 248, 0.8) !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12) !important;
+    transform: translateY(-1px);
+}
+
+#controls-col {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    gap: 12px;
+}
+
+#role-dropdown .wrap, #role-dropdown select, #role-dropdown input {
+    background: rgba(15, 23, 42, 0.9) !important;
+    border: 1px solid rgba(148, 163, 184, 0.18) !important;
+    border-radius: 10px !important;
+    color: var(--text) !important;
+}
+
+#analyze-btn {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 46%, #14b8a6 100%) !important;
+    background-size: 200% 200% !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 10px !important;
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    padding: 11px 18px !important;
+    cursor: pointer !important;
+    animation: morphBtnShimmer 6s ease infinite alternate !important;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease !important;
+}
+
+@keyframes morphBtnShimmer {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+#analyze-btn:hover {
+    transform: translateY(-1px) scale(1.01) !important;
+    box-shadow: 0 10px 22px -8px rgba(109, 94, 246, 0.5) !important;
+}
+
+#analyze-btn:active {
+    transform: scale(0.99) !important;
+}
+
+#reset-btn {
+    background: rgba(30, 41, 59, 0.9) !important;
+    color: #e2e8f0 !important;
+    border: 1px solid rgba(148, 163, 184, 0.24) !important;
+    border-radius: 10px !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    padding: 10px 14px !important;
+    cursor: pointer !important;
+    transition: background 0.15s ease, border-color 0.15s ease !important;
+}
+
+#reset-btn:hover {
+    background: rgba(51, 65, 85, 0.95) !important;
+    border-color: rgba(148, 163, 184, 0.4) !important;
+}
+
+#status-bar {
+    margin-bottom: 12px !important;
+    font-size: 0.9rem !important;
+    min-height: 28px;
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 12px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.status-pill.success {
+    color: #bbf7d0;
+    background: rgba(16, 185, 129, 0.12);
+    border-color: rgba(52, 211, 153, 0.28);
+}
+
+.status-pill.warning {
+    color: #fde68a;
+    background: rgba(245, 158, 11, 0.12);
+    border-color: rgba(245, 158, 11, 0.22);
+}
+
+.status-pill.danger {
+    color: #fecaca;
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(248, 113, 113, 0.2);
+}
+
+.status-pill.neutral {
+    color: #cbd5e1;
+    background: rgba(148, 163, 184, 0.08);
+    border-color: rgba(148, 163, 184, 0.18);
+}
+
+#results-row {
+    gap: 16px !important;
+    align-items: stretch !important;
+}
+
+.result-card {
+    background: linear-gradient(180deg, rgba(16, 27, 45, 0.9), rgba(10, 16, 28, 0.88));
+    border: 1px solid var(--border);
+    border-radius: 14px !important;
+    padding: 18px 18px 20px !important;
+    min-height: 365px !important;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease, border-color 0.25s ease !important;
+    animation: riseIn 700ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+
+#card-missing {
+    animation-delay: 180ms;
+}
+
+#card-relevant {
+    animation-delay: 280ms;
+}
+
+#card-improve {
+    animation-delay: 380ms;
+}
+
+@keyframes riseIn {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.result-card:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 16px 32px -20px rgba(15, 23, 42, 0.9) !important;
+}
+
+#card-missing  { border-top: 3px solid var(--danger) !important; }
+#card-relevant { border-top: 3px solid var(--success) !important; }
+#card-improve  { border-top: 3px solid var(--warning) !important; }
+
+#card-missing:hover  { border-top-color: #fca5a5 !important; }
+#card-relevant:hover { border-top-color: #6ee7b7 !important; }
+#card-improve:hover  { border-top-color: #fcd34d !important; }
+
+.card-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.title-missing  { color: #fca5a5; }
+.title-relevant { color: #6ee7b7; }
+.title-improve  { color: #fcd34d; }
+
+.result-card p, .result-card li {
+    color: #dbe7f5 !important;
+    font-size: 0.9rem !important;
+    line-height: 1.6 !important;
+}
+
+.result-card ul, .result-card ol {
+    padding-left: 18px !important;
+    margin-top: 10px !important;
+}
+
+.result-card h1, .result-card h2, .result-card h3, .result-card h4 {
+    color: #f8fafc !important;
+    font-size: 0.96rem !important;
+    font-weight: 700 !important;
+    margin-top: 12px !important;
+    margin-bottom: 6px !important;
+}
+
+.result-card code {
+    background: rgba(7, 17, 31, 0.92) !important;
+    color: #7dd3fc !important;
+    padding: 2px 5px !important;
+    border-radius: 5px !important;
+    font-size: 0.8rem !important;
+}
+
+.footer-clean {
+    text-align: center;
+    padding: 24px 0 10px;
+    color: rgba(148, 163, 184, 0.85);
+    font-size: 0.82rem;
+    letter-spacing: 0.02em;
+}
+
+.workflow-strip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 4px 16px;
+    color: #aab8cb;
+    font-size: 0.82rem;
+}
+
+.workflow-step { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.workflow-number {
+    display: inline-grid; place-items: center; width: 22px; height: 22px;
+    border-radius: 50%; color: #c4b5fd; background: rgba(109, 94, 246, 0.16);
+    border: 1px solid rgba(167, 139, 250, 0.28); font-size: 0.72rem; font-weight: 700;
+}
+.workflow-divider { width: 28px; height: 1px; background: rgba(148, 163, 184, 0.28); }
+#header-card { box-shadow: 0 12px 30px -26px rgba(109, 94, 246, 0.6); }
+#header-card h1 { animation: none; }
+.morph-orb { animation-duration: 16s; opacity: 0.7; }
+#input-panel { box-shadow: 0 12px 28px -24px rgba(15, 23, 42, 0.85); }
+.result-card { min-height: 300px !important; box-shadow: 0 10px 24px -26px rgba(15, 23, 42, 0.9); }
+.result-card:hover { transform: translateY(-2px) !important; }
+
+/* Solid surfaces: remove the remaining translucent/glass layers. */
+#header-card {
+    background: #101b2d !important;
+    backdrop-filter: none !important;
+}
+
+#header-card .block,
+#header-card .gradio-html,
+#header-card .html-container,
+#header-card .prose {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+#input-panel {
+    background: #0f1a2b !important;
+    backdrop-filter: none !important;
+}
+
+.result-card {
+    background: #101b2d !important;
+    backdrop-filter: none !important;
+}
+
+.morph-orb {
+    filter: none !important;
+    opacity: 0.18 !important;
+}
+
+/* Override Gradio theme tokens and nested wrappers that otherwise stay pale. */
+:root, .gradio-container {
+    --background-fill-primary: #07111f !important;
+    --background-fill-secondary: #0b1626 !important;
+    --block-background-fill: #101b2d !important;
+    --block-label-background-fill: #101b2d !important;
+    --input-background-fill: #0b1626 !important;
+    --panel-background-fill: #101b2d !important;
+    --border-color-primary: rgba(148, 163, 184, 0.22) !important;
+}
+
+#header-card .block,
+#header-card [class*="html"],
+#header-card [class*="wrap"],
+#header-card [class*="container"] {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+}
+
+#file-uploader,
+#file-uploader > div,
+#file-uploader [data-testid],
+#file-uploader [class*="upload"],
+#file-uploader [class*="file"] {
+    background: #0b1626 !important;
+    color: var(--text) !important;
+    backdrop-filter: none !important;
+}
+
+#role-dropdown,
+#role-dropdown > div,
+#role-dropdown .wrap {
+    background: #0b1626 !important;
+    color: var(--text) !important;
+    backdrop-filter: none !important;
+}
+
+/* Keep Gradio's nested component surfaces inside the dark theme. */
+.gradio-container .block:not(button):not(#header-card):not(#input-panel):not(.result-card),
+.gradio-container .form,
+.gradio-container .wrap,
+.gradio-container .container,
+.gradio-container .prose,
+.gradio-container .html-container,
+.gradio-container .markdown,
+#file-uploader > div,
+#file-uploader [data-testid],
+#file-uploader .upload-container,
+#file-uploader .file-preview,
+#role-dropdown > div,
+#role-dropdown .wrap {
+    background-color: transparent !important;
+}
+
+#file-uploader,
+#file-uploader > div,
+#file-uploader [data-testid],
+#role-dropdown .wrap {
+    color: var(--text) !important;
+}
+
+.gradio-container input,
+.gradio-container textarea,
+.gradio-container select {
+    background-color: #0b1626 !important;
+    color: var(--text) !important;
+    border-color: rgba(148, 163, 184, 0.24) !important;
+}
+
+.gradio-container input::placeholder,
+.gradio-container textarea::placeholder {
+    color: #94a3b8 !important;
+}
+
+@media (max-width: 760px) {
+    body, .gradio-container { padding: 16px 12px 32px !important; }
+    #header-card { padding: 20px !important; }
+    #input-panel { padding: 16px !important; }
+    .workflow-strip { flex-wrap: wrap; row-gap: 8px; padding: 0 2px 12px; }
+    .workflow-divider { width: 16px; }
+    .result-card { min-height: auto !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}
 """
 
 with gr.Blocks(title="Resume Analyzer") as demo:
@@ -846,55 +1314,95 @@ with gr.Blocks(title="Resume Analyzer") as demo:
     # ── Header ──────────────────────────────────────────────────────────────
     with gr.Group(elem_id="header-card"):
         gr.HTML("""
-            <h1>📄 Resume Analyzer</h1>
-            <p>Upload your resume and pick a target role — get a gap analysis in seconds.</p>
-        """)
+            <div class="morph-orb"></div>
+            <div class="header-inner">
+                <div class="header-tag"><span class="morph-tag-dot"></span>GEN-AI CAPSTONE</div>
+                <h1>Resume Analyzer</h1>
+                <p>Upload a resume and select a target technical role for instant gap analysis and bullet improvements.</p>
+            </div>
+        """, container=False)
 
-    # ── Inputs ──────────────────────────────────────────────────────────────
+    gr.HTML("""
+        <div class="workflow-strip" aria-label="How it works">
+            <span class="workflow-step"><span class="workflow-number">1</span>Upload your resume</span>
+            <span class="workflow-divider"></span>
+            <span class="workflow-step"><span class="workflow-number">2</span>Choose a target role</span>
+            <span class="workflow-divider"></span>
+            <span class="workflow-step"><span class="workflow-number">3</span>Review your insights</span>
+        </div>
+    """)
+
+    # ── Balanced Input Card ─────────────────────────────────────────────────
     with gr.Group(elem_id="input-panel"):
-        with gr.Row():
-            file_input = gr.File(
-                label="Upload Resume",
-                file_types=[".pdf", ".docx"],
-                scale=3,
-            )
-            role_dropdown = gr.Dropdown(
-                choices=ROLE_OPTIONS,
-                value=ROLE_OPTIONS[0],
-                label="Target Role",
-                scale=2,
-            )
+        with gr.Row(equal_height=True):
+            with gr.Column(scale=5):
+                file_input = gr.File(
+                    label="Upload Resume (.pdf or .docx)",
+                    file_types=[".pdf", ".docx"],
+                    file_count="single",
+                    elem_id="file-uploader",
+                )
 
-        analyze_btn = gr.Button(
-            "🔍  Analyze Resume",
-            elem_id="analyze-btn",
-            variant="primary",
-        )
+            with gr.Column(scale=4, elem_id="controls-col"):
+                role_dropdown = gr.Dropdown(
+                    choices=ROLE_OPTIONS,
+                    value=ROLE_OPTIONS[0],
+                    label="Target Role",
+                    elem_id="role-dropdown",
+                )
+                with gr.Row():
+                    analyze_btn = gr.Button(
+                        "⚡ Analyze Resume",
+                        elem_id="analyze-btn",
+                        variant="primary",
+                        scale=3,
+                    )
+                    reset_btn = gr.Button(
+                        "Reset",
+                        elem_id="reset-btn",
+                        variant="secondary",
+                        scale=1,
+                    )
 
     # ── Status ──────────────────────────────────────────────────────────────
-    status_bar = gr.Markdown(elem_id="status-bar")
+    status_bar = gr.HTML(value=STATUS_IDLE, elem_id="status-bar")
 
-    # ── Results (three side-by-side cards) ─────────────────────────────────
-    with gr.Row(equal_height=True):
+    # ── Results (Three Equal Columns) ───────────────────────────────────────
+    with gr.Row(equal_height=True, elem_id="results-row"):
 
         with gr.Column(elem_id="card-missing", elem_classes=["result-card"]):
-            gr.HTML('<p class="section-label label-missing">🔴 Missing Skills</p>')
-            out_missing = gr.Markdown()
+            gr.HTML('<div class="card-title title-missing">🔴 Missing Skills</div>')
+            out_missing = gr.Markdown(value=PLACEHOLDER_MISSING)
 
         with gr.Column(elem_id="card-relevant", elem_classes=["result-card"]):
-            gr.HTML('<p class="section-label label-relevant">🟢 Relevant Experience</p>')
-            out_relevant = gr.Markdown()
+            gr.HTML('<div class="card-title title-relevant">🟢 Relevant Experience</div>')
+            out_relevant = gr.Markdown(value=PLACEHOLDER_RELEVANT)
 
         with gr.Column(elem_id="card-improve", elem_classes=["result-card"]):
-            gr.HTML('<p class="section-label label-improve">🟡 Areas to Improve</p>')
-            out_improve = gr.Markdown()
+            gr.HTML('<div class="card-title title-improve">🟡 Areas to Improve</div>')
+            out_improve = gr.Markdown(value=PLACEHOLDER_IMPROVE)
 
-    # ── Wire up ─────────────────────────────────────────────────────────────
+    # ── Footer ──────────────────────────────────────────────────────────────
+    gr.HTML("""
+        <div class="footer-clean">
+            SRM IST • GenAI Capstone • Likith Reddy (RA2511028020082) • Sahid Saroj (RA2511028020086) • Aditya Kumar Singh (RA2511028020094)
+        </div>
+    """)
+
+    # ── Wire Up ─────────────────────────────────────────────────────────────
     analyze_btn.click(
         fn=analyze_resume,
         inputs=[file_input, role_dropdown],
         outputs=[status_bar, out_missing, out_relevant, out_improve],
     )
+
+    reset_btn.click(
+        fn=reset_pipeline,
+        inputs=[],
+        outputs=[file_input, role_dropdown, status_bar, out_missing, out_relevant, out_improve],
+    )
+
+    demo.load(fn=lambda: STATUS_IDLE, outputs=status_bar)
 
 # ---------------------------------------------------------------------------
 # 🚀  ENTRY POINT
@@ -906,4 +1414,8 @@ if __name__ == "__main__":
     print("[Server] Initializing Knowledge Base...", flush=True)
     get_kb_store()
     print("[Server] Launching Gradio UI on http://127.0.0.1:7860 ...", flush=True)
-    demo.launch(server_name="127.0.0.1", server_port=7860, css=_CSS)
+    demo.launch(
+        server_name="127.0.0.1",
+        server_port=7860,
+        css=_CSS,
+    )
