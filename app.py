@@ -1300,6 +1300,45 @@ code, pre {
     color: #94a3b8 !important;
 }
 
+/* Match the reference palette: navy canvas, slate surfaces, indigo glow. */
+:root, .gradio-container {
+    --bg: #07111f !important;
+    --panel-strong: #101b2d !important;
+    --panel-alt: #0b1626 !important;
+    --primary: #6d5ef6 !important;
+}
+
+body, .gradio-container {
+    background:
+        radial-gradient(ellipse at 0% 8%, #20224b 0%, #111a32 23%, #07111f 56%) !important;
+}
+
+#header-card {
+    background: #101b2d !important;
+}
+
+#header-card .header-inner {
+    background: linear-gradient(105deg, #414047 0%, #414149 76%, #344b60 100%) !important;
+    padding: 0 0 2px !important;
+}
+
+#input-panel {
+    background: #0f1a2b !important;
+}
+
+#input-panel #controls-col:not(#header-card):not(.result-card),
+#input-panel #controls-col:not(#header-card):not(.result-card) > div {
+    background: #3b3b40 !important;
+}
+
+#file-uploader, #file-uploader > div, #file-uploader [data-testid] {
+    background: #0b1626 !important;
+}
+
+#role-dropdown, #role-dropdown > div, #role-dropdown .wrap {
+    background: #111a2c !important;
+}
+
 @media (max-width: 760px) {
     body, .gradio-container { padding: 16px 12px 32px !important; }
     #header-card { padding: 20px !important; }
@@ -1321,61 +1360,26 @@ code, pre {
 }
 """
 
-# Fresh visual system for the redesigned interface.
-_CSS = """
-:root { --ink:#f3f0ff; --muted:#b6accf; --line:#493b67; --paper:#100d19; --violet:#8b5cf6; --violet-bright:#a78bfa; --panel:#1d172a; --panel-deep:#171222; --background-fill-primary:#100d19; --background-fill-secondary:#171222; --block-background-fill:#1d172a; --input-background-fill:#251d34; --border-color-primary:#493b67; }
-* { box-sizing:border-box; font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif !important; }
-body,.gradio-container { background:var(--paper) !important; color:var(--ink) !important; max-width:1180px !important; margin:auto !important; }
-.gradio-container { padding:28px 24px 40px !important; }
-.gradio-container .block,.gradio-container .form,.gradio-container .wrap,.gradio-container .container { background-color:#1d172a !important; }
-#header-card .html-container,#header-card .prose,#header-card .gradio-html { background-color:#251b38 !important; }
-#header-card { background:#251b38 !important; border:1px solid #554274 !important; border-radius:22px !important; padding:34px 38px !important; margin-bottom:20px !important; box-shadow:none !important; }
-#header-card h1 { color:#fff !important; -webkit-text-fill-color:#fff !important; font-size:clamp(2rem,4vw,3.2rem) !important; letter-spacing:-.04em; }
-#header-card p { color:#d9ccef !important; }
-.header-tag { color:#c4a9ff !important; background:#35264d !important; border:1px solid #654b8d !important; padding:5px 10px !important; }
-.workflow-strip { color:var(--muted) !important; padding:4px 2px 16px !important; }
-.workflow-number { color:#eee7ff !important; background:#392957 !important; border-color:#7252a6 !important; }
-#input-panel,.result-card { background:var(--panel) !important; border:1px solid var(--line) !important; border-radius:18px !important; padding:22px !important; box-shadow:none !important; }
-#input-panel { margin-bottom:16px !important; overflow:visible !important; }
-#controls-col { gap:12px; }
-#role-dropdown { position:relative !important; z-index:20 !important; overflow:visible !important; }
-#role-dropdown input,#role-dropdown .wrap,#role-dropdown > div { background:#251d34 !important; color:var(--ink) !important; border-color:#584771 !important; border-radius:12px !important; }
-#role-dropdown [role="listbox"],#role-dropdown [role="option"],#role-dropdown .options { background:#251d34 !important; color:var(--ink) !important; }
-#role-dropdown [role="option"]:hover { background:#44305f !important; }
-#file-uploader,#file-uploader > div,#file-uploader [data-testid] { background:var(--panel-deep) !important; color:var(--ink) !important; border:1px dashed #70579a !important; border-radius:12px !important; min-height:150px !important; }
-#analyze-btn { background:#7543d6 !important; color:white !important; border:1px solid #9b70f2 !important; border-radius:11px !important; font-weight:700 !important; min-height:48px; }
-#analyze-btn:hover { background:#8653e8 !important; }
-#reset-btn { border-radius:11px !important; border:1px solid #584771 !important; background:#302440 !important; color:var(--ink) !important; }
-#status-bar { margin:12px 0 18px; }
-.status-pill { display:inline-flex; padding:9px 13px; border-radius:999px; background:#302440 !important; color:#d8c3ff !important; border:1px solid #624b83; font-size:.88rem; }
-.result-card { min-height:250px !important; }
-.card-title { font-weight:750; font-size:1rem; color:#e9ddff; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--line); }
-.result-card p,.result-card li { color:#d8d0e7 !important; line-height:1.65 !important; }
-.result-card h1,.result-card h2,.result-card h3 { color:#f3edff !important; font-size:1rem !important; }
-.footer-clean { color:var(--muted) !important; }
-@media(max-width:760px) { .gradio-container { padding:14px !important; } #header-card { padding:25px 22px !important; } #input-panel,.result-card { padding:16px !important; } .workflow-strip { flex-wrap:wrap; } }
-"""
-
-with gr.Blocks(title="Resume Analyzer", theme=gr.themes.Base(), css=_CSS) as demo:
+with gr.Blocks(title="Resume Analyzer") as demo:
 
     # ── Header ──────────────────────────────────────────────────────────────
     with gr.Group(elem_id="header-card"):
         gr.HTML("""
             <div class="morph-orb"></div>
             <div class="header-inner">
-                <div class="header-tag">RESUME INSIGHTS · GEN-AI CAPSTONE</div>
-                <h1>Make your next move<br>with a stronger resume.</h1>
-                <p>Choose a target role and get a focused review of your skills, experience, and resume bullet points.</p>
+                <div class="header-tag"><span class="morph-tag-dot"></span>GEN-AI CAPSTONE</div>
+                <h1>Resume Analyzer</h1>
+                <p>Upload a resume and select a target technical role for instant gap analysis and bullet improvements.</p>
             </div>
         """, container=False)
 
     gr.HTML("""
         <div class="workflow-strip" aria-label="How it works">
-            <span class="workflow-step"><span class="workflow-number">1</span>Add your resume</span>
+            <span class="workflow-step"><span class="workflow-number">1</span>Upload your resume</span>
             <span class="workflow-divider"></span>
             <span class="workflow-step"><span class="workflow-number">2</span>Choose a target role</span>
             <span class="workflow-divider"></span>
-            <span class="workflow-step"><span class="workflow-number">3</span>Explore your review</span>
+            <span class="workflow-step"><span class="workflow-number">3</span>Review your insights</span>
         </div>
     """)
 
@@ -1384,7 +1388,7 @@ with gr.Blocks(title="Resume Analyzer", theme=gr.themes.Base(), css=_CSS) as dem
         with gr.Row(equal_height=True):
             with gr.Column(scale=5):
                 file_input = gr.File(
-                    label="Resume file - PDF or DOCX",
+                    label="Upload Resume (.pdf or .docx)",
                     file_types=[".pdf", ".docx"],
                     file_count="single",
                     elem_id="file-uploader",
@@ -1394,7 +1398,7 @@ with gr.Blocks(title="Resume Analyzer", theme=gr.themes.Base(), css=_CSS) as dem
                 role_dropdown = gr.Dropdown(
                     choices=ROLE_OPTIONS,
                     value=ROLE_OPTIONS[0],
-                    label="Target role",
+                    label="Target Role",
                     elem_id="role-dropdown",
                 )
                 with gr.Row():
@@ -1405,7 +1409,7 @@ with gr.Blocks(title="Resume Analyzer", theme=gr.themes.Base(), css=_CSS) as dem
                         scale=3,
                     )
                     reset_btn = gr.Button(
-                        "Clear",
+                        "Reset",
                         elem_id="reset-btn",
                         variant="secondary",
                         scale=1,

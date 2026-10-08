@@ -69,6 +69,6 @@ The `knowledge_base/` directory contains the role benchmarks and resume-improvem
 
 ## Team
 
-- Musani Likith Reddy (RA2511028020082)
-- Sahid Saroj Bastia (RA2511028020086)
-- Aditya Kumar Singh (RA2511028020094)
+- Musani Likith Reddy
+- Sahid Saroj Bastia 
+- Aditya Kumar Singh 
