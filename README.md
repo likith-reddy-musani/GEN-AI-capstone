@@ -44,7 +44,7 @@ Start the app:
 python app.py
 ```
 
-When Gradio starts, open [http://127.0.0.1:7860](http://127.0.0.1:7860). Keep the terminal running while you use the app.
+When Gradio starts, open the local URL printed in the terminal. If port 7860 is busy, Gradio will select another available port. Keep the terminal running while you use the app.
 
 1. Upload a PDF or DOCX resume. You can try the included [sample resume](./sample_resume.docx).
 2. Select a target role.

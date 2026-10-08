@@ -1428,6 +1428,5 @@ if __name__ == "__main__":
     print("[Server] Launching Gradio UI on http://127.0.0.1:7860 ...", flush=True)
     demo.launch(
         server_name="127.0.0.1",
-        server_port=7860,
         css=_CSS,
     )
