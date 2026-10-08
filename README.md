@@ -90,6 +90,11 @@ On startup, the app prepares the knowledge base and builds its vector index.
 Gradio prints a local URL in the terminal. Open it in a browser, upload a PDF or
 DOCX resume, select a target role, and click **Analyze Resume**.
 
+
+## 📸 Screenshot
+
+![Resume Analyzer application screenshot](./image.jpeg)
+
 ## 📚 Knowledge Base
 
 The `knowledge_base/` directory contains role benchmarks and a resume
