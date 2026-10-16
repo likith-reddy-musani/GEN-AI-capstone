@@ -986,7 +986,7 @@ code, pre {
 
 /* Remove gap between dropdown trigger and options */
 #role-dropdown [role="listbox"] {
-    margin-top: -2px !important;
+    margin-top: -8px !important;
 }
 
 #analyze-btn {
