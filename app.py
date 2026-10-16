@@ -988,6 +988,66 @@ code, pre {
    Gradio uses position:fixed for .options so JS calculates the top.
    We can't override the gap via CSS - it's set by JS. */
 
+/* ── Native select replacement for role dropdown ── */
+.native-select-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.native-select-label {
+    color: #94a3b8;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+}
+
+.native-select-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.native-select {
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    background: rgba(15, 23, 42, 0.9) !important;
+    color: #f8fafc !important;
+    border: 1px solid rgba(148, 163, 184, 0.18) !important;
+    border-radius: 10px !important;
+    padding: 10px 36px 10px 14px !important;
+    font-size: 0.95rem;
+    font-family: inherit;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.native-select:hover {
+    border-color: rgba(129, 140, 248, 0.6) !important;
+}
+
+.native-select:focus {
+    border-color: rgba(109, 94, 246, 0.8) !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+}
+
+.native-select option {
+    background: #0f172a !important;
+    color: #f8fafc !important;
+    padding: 8px 14px !important;
+}
+
+.native-select-arrow {
+    position: absolute;
+    right: 12px;
+    color: #94a3b8;
+    font-size: 0.8rem;
+    pointer-events: none;
+}
+
 #analyze-btn {
     background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 46%, #14b8a6 100%) !important;
     background-size: 200% 200% !important;
@@ -1399,11 +1459,23 @@ with gr.Blocks(title="Resume Analyzer") as demo:
                 )
 
             with gr.Column(scale=4, elem_id="controls-col"):
-                role_dropdown = gr.Dropdown(
-                    choices=ROLE_OPTIONS,
+                # Native <select> replaces gr.Dropdown to avoid the gap bug
+                gr.HTML(f"""
+                <div class="native-select-wrap">
+                    <label class="native-select-label">Target Role</label>
+                    <div class="native-select-inner">
+                        <select id="role-select" class="native-select" onchange="document.getElementById('role-textbox').querySelector('textarea').value=this.value; document.getElementById('role-textbox').querySelector('textarea').dispatchEvent(new Event('input',{{bubbles:true}}))">
+                            {"".join(f'<option value="{r}">{r}</option>' for r in ROLE_OPTIONS)}
+                        </select>
+                        <span class="native-select-arrow">▾</span>
+                    </div>
+                </div>
+                """)
+                role_dropdown = gr.Textbox(
                     value=ROLE_OPTIONS[0],
-                    label="Target Role",
-                    elem_id="role-dropdown",
+                    elem_id="role-textbox",
+                    visible=False,
+                    label="role",
                 )
                 with gr.Row():
                     analyze_btn = gr.Button(
