@@ -952,6 +952,17 @@ code, pre {
     overflow: hidden;
 }
 
+/* Kill the dark stripe - both panels inside gr.File must share same bg */
+#file-uploader .file-preview-holder,
+#file-uploader .upload-container,
+#file-uploader [class*="svelte-8prmba"],
+#file-uploader [class*="svelte-al0bnp"],
+#file-uploader > div,
+#file-uploader > div > div {
+    background: rgba(7, 17, 31, 0.9) !important;
+    background-color: rgba(7, 17, 31, 0.9) !important;
+}
+
 #file-uploader:hover {
     border-color: rgba(129, 140, 248, 0.8) !important;
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12) !important;
