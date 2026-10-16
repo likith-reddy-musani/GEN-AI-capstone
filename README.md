@@ -2,6 +2,10 @@
 
 A Gen-AI capstone app that compares a resume with role-specific benchmarks and gives actionable feedback.
 
+## 📜 Problem Statement
+
+Students often receive resumes with different formats and struggle to quickly identify missing skills, relevant experience, and areas that could be improved.
+
 ## ✨ Features
 
 - Accepts PDF and DOCX resumes.
@@ -55,6 +59,9 @@ The app builds its knowledge-base index during startup. The local embedding mode
 
 ## 🖼️ Screenshot 
 ![Resume Analyzer application screenshot](./resume-analyzer-screenshot.jpeg)
+
+## Project Recording
+https://github.com/user-attachments/assets/41ef5cca-3aed-4f04-9b3f-11ae3434ec95
 
 ## 📚 Knowledge Base
 
