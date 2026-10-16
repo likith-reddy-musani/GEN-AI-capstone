@@ -986,27 +986,7 @@ code, pre {
 
 /* Remove gap between dropdown trigger and options.
    Gradio uses position:fixed for .options so JS calculates the top.
-   We override to absolute so it snaps directly under the trigger. */
-#role-dropdown .options {
-    position: absolute !important;
-    top: 100% !important;
-    left: 0 !important;
-    right: 0 !important;
-    margin-top: 2px !important;
-}
-
-#model-dropdown .options {
-    position: absolute !important;
-    top: 100% !important;
-    left: 0 !important;
-    right: 0 !important;
-    margin-top: 2px !important;
-}
-
-#role-dropdown,
-#model-dropdown {
-    position: relative !important;
-}
+   We can't override the gap via CSS - it's set by JS. */
 
 #analyze-btn {
     background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 46%, #14b8a6 100%) !important;
