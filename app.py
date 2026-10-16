@@ -972,6 +972,17 @@ code, pre {
     overflow: visible !important;
 }
 
+/* Position dropdown options directly below the button with no gap */
+#role-dropdown [role="listbox"],
+#role-dropdown [role="option"],
+#role-dropdown .wrap > div:last-child {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
 #input-panel,
 #controls-col {
     overflow: visible !important;
